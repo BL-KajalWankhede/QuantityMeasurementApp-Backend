@@ -1,5 +1,8 @@
 package com.quantitymeasurement;
 
+import static com.quantitymeasurement.FeetAndInchesEquality.areFeetEqual;
+import static com.quantitymeasurement.FeetAndInchesEquality.areInchesEqual;
+
 /**
  * Hello world!
  *
@@ -13,8 +16,11 @@ public class App
         boolean result = value1.equals(value2);
         System.out.println("Input: 1.0 ft and 1.0 ft");
         System.out.println("Output: Equal (" + result + ")");
-
-
+        System.out.println("---------------------------------");
+        System.out.println("Input: 1.0 inch and 1.0 inch");
+        System.out.println("Output: Equal (" + areInchesEqual(1.0, 1.0) + ")");
+        System.out.println("Input: 1.0 ft and 1.0 ft");
+        System.out.println("Output: Equal (" + areFeetEqual(1.0, 1.0) + ")");
 
     }
 }
