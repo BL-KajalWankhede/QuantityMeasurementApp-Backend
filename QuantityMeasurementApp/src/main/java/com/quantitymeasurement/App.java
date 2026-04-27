@@ -2,8 +2,7 @@ package com.quantitymeasurement;
 
 import static com.quantitymeasurement.FeetAndInchesEquality.areFeetEqual;
 import static com.quantitymeasurement.FeetAndInchesEquality.areInchesEqual;
-import static com.quantitymeasurement.QuantityLengthEquality.areEqual;
-import static com.quantitymeasurement.QuantityLengthEquality.convert;
+import static com.quantitymeasurement.QuantityLengthEquality.*;
 
 /**
  * Hello world!
@@ -46,6 +45,9 @@ public class App
         System.out.println("Output: " + convert(36.0, QuantityLengthEquality.LengthUnit.INCH, QuantityLengthEquality.LengthUnit.YARDS));
         System.out.println("Input: convert(1.0, CENTIMETERS, INCHES)");
         System.out.println("Output: " + convert(1.0, QuantityLengthEquality.LengthUnit.CENTIMETERS, QuantityLengthEquality.LengthUnit.INCH));
-
+        System.out.println("------------------------------------");
+        System.out.println("Input: add(Quantity(1.0, FEET), Quantity(12.0, INCHES))");
+        System.out.println("Output: " + add(new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.FEET),
+                new QuantityLength(12.0, LengthUnit.INCH)));
     }
 }
