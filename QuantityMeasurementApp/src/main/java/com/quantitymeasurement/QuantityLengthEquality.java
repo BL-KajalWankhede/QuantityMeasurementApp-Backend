@@ -66,9 +66,23 @@ public class QuantityLengthEquality {
             if (other == null) {
                 throw new IllegalArgumentException("Length to add must not be null");
             }
+         return addToTarget(other, this.unit);
+        }
+
+         public QuantityLength add(QuantityLength other, LengthUnit targetUnit) {
+             if (other == null) {
+                 throw new IllegalArgumentException("Length to add must not be null");
+             }
+             if (targetUnit == null) {
+                 throw new IllegalArgumentException("Target unit must not be null");
+             }
+             return addToTarget(other, targetUnit);
+         }
+
+         private QuantityLength addToTarget(QuantityLength other, LengthUnit targetUnit) {
             double totalFeet = this.valueInFeet() + other.valueInFeet();
-            double converted = this.unit.fromFeet(totalFeet);
-            return new QuantityLength(converted, this.unit);
+            double converted = targetUnit.fromFeet(totalFeet);
+            return new QuantityLength(converted, targetUnit);
    }
 
    @Override
@@ -123,10 +137,29 @@ public class QuantityLengthEquality {
         return first.add(second);
     }
 
+
+
     public static QuantityLength add(double firstValue, LengthUnit firstUnit,
                                      double secondValue, LengthUnit secondUnit) {
         return new QuantityLength(firstValue, firstUnit)
                 .add(new QuantityLength(secondValue, secondUnit));
+    }
+
+    public static QuantityLength add(QuantityLength first, QuantityLength second, LengthUnit targetUnit) {
+        if (first == null || second == null) {
+            throw new IllegalArgumentException("Lengths must not be null");
+        }
+        if (targetUnit == null) {
+            throw new IllegalArgumentException("Target unit must not be null");
+        }
+        return first.add(second, targetUnit);
+    }
+
+    public static QuantityLength add(double firstValue, LengthUnit firstUnit,
+                                     double secondValue, LengthUnit secondUnit,
+                                     LengthUnit targetUnit) {
+        return new QuantityLength(firstValue, firstUnit)
+                .add(new QuantityLength(secondValue, secondUnit), targetUnit);
     }
 
 }

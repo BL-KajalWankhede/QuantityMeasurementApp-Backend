@@ -49,5 +49,9 @@ public class App
         System.out.println("Input: add(Quantity(1.0, FEET), Quantity(12.0, INCHES))");
         System.out.println("Output: " + add(new QuantityLengthEquality.QuantityLength(1.0, LengthUnit.FEET),
                 new QuantityLength(12.0, LengthUnit.INCH)));
+        System.out.println("------------------------------------");
+        System.out.println("Input: add(Quantity(1.0, FEET), Quantity(12.0, INCHES), YARDS)");
+        System.out.println("Output: " + add(new QuantityLength(1.0, LengthUnit.FEET),
+                new QuantityLength(12.0, LengthUnit.INCH), LengthUnit.YARDS));
     }
 }
