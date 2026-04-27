@@ -27,6 +27,15 @@ public class App
         System.out.println("Output: Equal (" + areEqual(1.0, QuantityLengthEquality.LengthUnit.FEET, 12.0, QuantityLengthEquality.LengthUnit.INCH) + ")");
         System.out.println("Input: Quantity(1.0, \"inch\") and Quantity(1.0, \"inch\")");
         System.out.println("Output: Equal (" + areEqual(1.0, QuantityLengthEquality.LengthUnit.INCH, 1.0, QuantityLengthEquality.LengthUnit.INCH) + ")");
+        System.out.println("-----------------------------------");
+        System.out.println("Input: Quantity(1.0, YARDS) and Quantity(3.0, FEET)");
+        System.out.println("Output: Equal (" + areEqual(1.0, QuantityLengthEquality.LengthUnit.YARDS, 3.0, QuantityLengthEquality.LengthUnit.FEET) + ")");
+        System.out.println("Input: Quantity(1.0, YARDS) and Quantity(36.0, INCHES)");
+        System.out.println("Output: Equal (" + areEqual(1.0, QuantityLengthEquality.LengthUnit.YARDS, 36.0, QuantityLengthEquality.LengthUnit.INCH) + ")");
+        System.out.println("Input: Quantity(2.0, CENTIMETERS) and Quantity(2.0, CENTIMETERS)");
+        System.out.println("Output: Equal (" + areEqual(2.0, QuantityLengthEquality.LengthUnit.CENTIMETERS, 2.0, QuantityLengthEquality.LengthUnit.CENTIMETERS) + ")");
+        System.out.println("Input: Quantity(1.0, CENTIMETERS) and Quantity(0.393701, INCHES)");
+        System.out.println("Output: Equal (" + areEqual(1.0, QuantityLengthEquality.LengthUnit.CENTIMETERS, 0.393701, QuantityLengthEquality.LengthUnit.INCH) + ")");
 
     }
 }
