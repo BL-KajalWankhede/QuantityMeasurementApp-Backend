@@ -102,7 +102,11 @@ public final class Quantity<U extends IMeasurable> {
             throw new IllegalArgumentException(nullOtherMessage);
         }
         if (!unit.getClass().equals(other.unit.getClass())) {
-            throw new IllegalArgumentException(crossCategoryMessage(operation));        }
+            throw new IllegalArgumentException(crossCategoryMessage(operation));
+        }
+        unit.validateOperationSupport(operation.name());
+        other.unit.validateOperationSupport(operation.name());
+
         if (Double.isNaN(other.value) || Double.isInfinite(other.value)) {
             throw new IllegalArgumentException("Value must be a finite number");
         }
