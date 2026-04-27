@@ -3,6 +3,7 @@ package com.quantitymeasurement;
 import static com.quantitymeasurement.FeetAndInchesEquality.areFeetEqual;
 import static com.quantitymeasurement.FeetAndInchesEquality.areInchesEqual;
 import static com.quantitymeasurement.QuantityLengthEquality.areEqual;
+import static com.quantitymeasurement.QuantityLengthEquality.convert;
 
 /**
  * Hello world!
@@ -36,6 +37,15 @@ public class App
         System.out.println("Output: Equal (" + areEqual(2.0, QuantityLengthEquality.LengthUnit.CENTIMETERS, 2.0, QuantityLengthEquality.LengthUnit.CENTIMETERS) + ")");
         System.out.println("Input: Quantity(1.0, CENTIMETERS) and Quantity(0.393701, INCHES)");
         System.out.println("Output: Equal (" + areEqual(1.0, QuantityLengthEquality.LengthUnit.CENTIMETERS, 0.393701, QuantityLengthEquality.LengthUnit.INCH) + ")");
+        System.out.println("-------------------------------------");
+        System.out.println("Input: convert(1.0, FEET, INCHES)");
+        System.out.println("Output: " + convert(1.0, QuantityLengthEquality.LengthUnit.FEET, QuantityLengthEquality.LengthUnit.INCH));
+        System.out.println("Input: convert(3.0, YARDS, FEET)");
+        System.out.println("Output: " + convert(3.0, QuantityLengthEquality.LengthUnit.YARDS, QuantityLengthEquality.LengthUnit.FEET));
+        System.out.println("Input: convert(36.0, INCHES, YARDS)");
+        System.out.println("Output: " + convert(36.0, QuantityLengthEquality.LengthUnit.INCH, QuantityLengthEquality.LengthUnit.YARDS));
+        System.out.println("Input: convert(1.0, CENTIMETERS, INCHES)");
+        System.out.println("Output: " + convert(1.0, QuantityLengthEquality.LengthUnit.CENTIMETERS, QuantityLengthEquality.LengthUnit.INCH));
 
     }
 }
