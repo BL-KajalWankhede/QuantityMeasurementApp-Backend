@@ -5,7 +5,8 @@ package com.quantitymeasurement;
 public enum WeightUnit implements IMeasurable {
     KILOGRAM(1.0),
     GRAM(0.001),
-    POUND(0.45359237);
+    POUND(0.45359237),
+    OUNCE(0.028349523125);
 
     private final double toKilogramFactor;
 
@@ -32,4 +33,8 @@ public enum WeightUnit implements IMeasurable {
          public String getUnitName() {
              return name();
 }
+     @Override
+      public String getMeasurementType() {
+        return "WEIGHT";
+     }
 }
