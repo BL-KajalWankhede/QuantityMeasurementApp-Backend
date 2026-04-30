@@ -1,27 +1,48 @@
 package com.quantitymeasurement.model;
 
 import com.equality.IMeasurable;
+import com.fasterxml.jackson.annotation.JsonAlias;
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Objects;
+public class QuantityDTO {
+    @NotNull(message = "Value must be provided")
+    private Double value;
 
-public class QuantityDTO implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 1L;
+    @NotBlank(message = "Unit must be provided")
+    @JsonAlias("unit")
+    private String unitName;
+    @NotBlank(message = "Measurement type must be provided")
+    private String measurementType;
 
-    private final double value;
-    private final String unitName;
-    private final String measurementType;
+    public QuantityDTO() {
+    }
 
     public QuantityDTO(double value, String unitName, String measurementType) {
         this.value = value;
-        this.unitName = Objects.requireNonNull(unitName, "Unit name must not be null");
-        this.measurementType = Objects.requireNonNull(measurementType, "Measurement type must not be null");
+        this.unitName = unitName;
+        this.measurementType = measurementType;
     }
 
-    public double getValue() {
+    public Double getValue() {
         return value;
+    }
+
+    public void setValue(Double value) {
+        this.value = value;
+    }
+
+    public String getUnit() {
+        return unitName;
+    }
+
+    public void setUnitName(String unitName) {
+        this.unitName = unitName;
+    }
+
+    public void setUnit(String unitName) {
+        this.unitName = unitName;
     }
 
     public String getUnitName() {
@@ -32,16 +53,24 @@ public class QuantityDTO implements Serializable {
         return measurementType;
     }
 
-    public static QuantityDTO from(double value, IMeasurable unit) {
-        return new QuantityDTO(value, unit.getUnitName(), unit.getMeasurementType());
+    public void setMeasurementType(String measurementType) {
+        this.measurementType = measurementType;
     }
 
-    @Override
-    public String toString() {
-        return "QuantityDTO{" +
-                "value=" + value +
-                ", unitName='" + unitName + '\'' +
-                ", measurementType='" + measurementType + '\'' +
-                '}';
+    @AssertTrue(message = "Unit must be valid for the specified measurement type")
+    public boolean isValidUnitForMeasurementType() {
+        if (measurementType == null || measurementType.isBlank() || unitName == null || unitName.isBlank()) {
+            return true;
+        }
+        try {
+            IMeasurable.resolveUnit(measurementType, unitName);
+            return true;
+        } catch (IllegalArgumentException exception) {
+            return false;
+        }
+    }
+
+    public static QuantityDTO from(double value, IMeasurable unit) {
+        return new QuantityDTO(value, unit.getUnitName(), unit.getMeasurementType());
     }
 }
