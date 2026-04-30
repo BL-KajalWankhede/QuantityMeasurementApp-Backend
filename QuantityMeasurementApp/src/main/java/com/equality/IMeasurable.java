@@ -1,4 +1,4 @@
-package com.quantitymeasurement;
+package com.equality;
 
 
 import java.util.Locale;

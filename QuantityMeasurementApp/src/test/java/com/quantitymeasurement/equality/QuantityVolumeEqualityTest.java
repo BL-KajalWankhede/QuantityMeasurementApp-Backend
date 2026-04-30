@@ -1,5 +1,6 @@
-package com.quantitymeasurement;
+package com.quantitymeasurement.equality;
 
+import com.equality.*;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

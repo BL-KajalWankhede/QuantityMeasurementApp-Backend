@@ -1,5 +1,4 @@
-package com.quantitymeasurement;
-import java.util.Objects;
+package com.equality;
 
 public class QuantityLengthEquality {
 

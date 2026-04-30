@@ -1,4 +1,4 @@
-package com.quantitymeasurement;
+package com.equality;
 
     /**
      * * Supported volume units with conversion factors to litres.

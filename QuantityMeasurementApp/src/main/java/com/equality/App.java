@@ -1,8 +1,8 @@
-package com.quantitymeasurement;
+package com.equality;
 
-import static com.quantitymeasurement.FeetAndInchesEquality.areFeetEqual;
-import static com.quantitymeasurement.FeetAndInchesEquality.areInchesEqual;
-import static com.quantitymeasurement.QuantityLengthEquality.*;
+import static com.equality.FeetAndInchesEquality.areFeetEqual;
+import static com.equality.FeetAndInchesEquality.areInchesEqual;
+import static com.equality.QuantityLengthEquality.*;
 
 /**
  * Hello world!

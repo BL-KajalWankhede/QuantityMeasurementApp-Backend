@@ -1,4 +1,4 @@
-package com.quantitymeasurement;
+package com.equality;
      /**
       * Supported weight units with conversion factors to kilograms.
       */

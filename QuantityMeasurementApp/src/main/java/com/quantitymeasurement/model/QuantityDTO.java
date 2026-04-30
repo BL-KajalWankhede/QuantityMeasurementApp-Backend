@@ -1,6 +1,6 @@
 package com.quantitymeasurement.model;
 
-import com.quantitymeasurement.IMeasurable;
+import com.equality.IMeasurable;
 
 import java.io.Serial;
 import java.io.Serializable;

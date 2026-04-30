@@ -1,7 +1,7 @@
 package com.quantitymeasurement.service;
 
 
-import com.quantitymeasurement.*;
+import com.equality.*;
 import com.quantitymeasurement.exception.QuantityMeasurementException;
 import com.quantitymeasurement.model.QuantityDTO;
 import com.quantitymeasurement.model.QuantityMeasurementEntity;

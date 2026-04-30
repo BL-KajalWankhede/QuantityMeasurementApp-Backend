@@ -1,9 +1,11 @@
-package com.quantitymeasurement;
+package com.quantitymeasurement.equality;
 
+import com.equality.LengthUnit;
+import com.equality.Quantity;
 import org.junit.jupiter.api.Test;
 
-import static com.quantitymeasurement.QuantityLengthEquality.add;
-import static com.quantitymeasurement.QuantityLengthEquality.convert;
+import static com.equality.QuantityLengthEquality.add;
+import static com.equality.QuantityLengthEquality.convert;
 import static org.junit.jupiter.api.Assertions.*;
 
 class QuantityLengthEqualityTest {

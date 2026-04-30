@@ -1,4 +1,4 @@
-package com.quantitymeasurement;
+package com.quantitymeasurement.equality;
 
 /**
  * Unit test for simple App.
@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.equality.Feet;
 import org.junit.jupiter.api.Test;
 
 /**
