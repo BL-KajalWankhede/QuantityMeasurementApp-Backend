@@ -1,5 +1,6 @@
 package com.quantitymeasurement.exception;
 
+import com.quantitymeasurement.auth.AuthFlowException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleQuantityException(
             QuantityMeasurementException exception, HttpServletRequest request) {
         return buildResponse(HttpStatus.BAD_REQUEST, "Quantity Measurement Error",
+                exception.getMessage(), request.getRequestURI());
+    }
+    @ExceptionHandler(AuthFlowException.class)
+    public ResponseEntity<Map<String, Object>> handleAuthException(
+            AuthFlowException exception, HttpServletRequest request) {
+        return buildResponse(HttpStatus.BAD_REQUEST, "Authentication Error",
                 exception.getMessage(), request.getRequestURI());
     }
 

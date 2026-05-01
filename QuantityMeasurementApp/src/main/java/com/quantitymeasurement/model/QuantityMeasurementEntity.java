@@ -72,6 +72,10 @@ public class QuantityMeasurementEntity {
     @Column(name = "error_message", length = 500)
     private String errorMessage;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
+
     public QuantityMeasurementEntity() {
     }
 
@@ -269,6 +273,14 @@ public class QuantityMeasurementEntity {
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }
+    public UserEntity getUser() {
+        return user;
+    }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
+    }
+
 
     public QuantityDTO getLeftOperand() {
         return new QuantityDTO(leftValue, leftUnit, leftMeasurementType);
