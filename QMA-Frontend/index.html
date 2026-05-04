@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantity Measurement</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- LANDING PAGE (Login/Signup) -->
+        <section id="landing-page" class="landing-page">
+            <div class="auth-card">
+                <header>
+                    <h1>Quantity Measurement</h1>
+                    <p>Login or Sign up to access the dashboard</p>
+                </header>
+
+                <div id="login-form-container">
+                    <h3>Login</h3>
+                    <form id="login-form">
+                        <div class="input-section">
+                            <label for="login-email">Email</label>
+                            <input type="email" id="login-email" placeholder="email@example.com" required>
+                            <label for="login-password">Password</label>
+                            <input type="password" id="login-password" placeholder="Enter password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                    </form>
+                    <p class="auth-toggle">
+                        Don't have an account? <a href="#" id="link-show-signup">Sign Up</a>
+                    </p>
+                </div>
+
+                <div id="signup-form-container" class="hidden">
+                    <h3>Sign Up</h3>
+                    <form id="signup-form">
+                        <div class="input-section">
+                            <label for="signup-name">Full Name</label>
+                            <input type="text" id="signup-name" placeholder="John Doe" required>
+                            <label for="signup-email">Email</label>
+                            <input type="email" id="signup-email" placeholder="email@example.com" required>
+                            <label for="signup-password">Password</label>
+                            <input type="password" id="signup-password" placeholder="Min 8 characters" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Create Account</button>
+                    </form>
+                    <p class="auth-toggle">
+                        Already have an account? <a href="#" id="link-show-login">Login</a>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- MAIN APPLICATION (Protected Dashboard) -->
+        <div id="main-app" class="hidden">
+            <header class="dashboard-header">
+                <div class="header-content">
+                    <h1>Quantity Measurement</h1>
+                    <div class="user-profile">
+                        <span id="user-display"></span>
+                        <button id="btn-logout" class="btn btn-outline btn-sm">Logout</button>
+                    </div>
+                </div>
+            </header>
+
+            <main>
+                <!-- Sidebar and Content as before -->
+                <aside class="sidebar">
+                    <h3>Types</h3>
+                    <ul id="measurement-types" class="type-list"></ul>
+                </aside>
+
+                <section class="content">
+                    <form id="measurement-form" class="measurement-form">
+                        <div class="form-group flex-group">
+                            <div class="input-section">
+                                <label for="this-value">Value 1</label>
+                                <input type="number" id="this-value" required>
+                                <label for="this-unit">Unit 1</label>
+                                <select id="this-unit" required></select>
+                            </div>
+                            <div class="input-section">
+                                <label for="that-value">Value 2</label>
+                                <input type="number" id="that-value" required>
+                                <label for="that-unit">Unit 2</label>
+                                <select id="that-unit" required></select>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" id="btn-convert" class="btn btn-primary">Convert</button>
+                            <button type="button" id="btn-add" class="btn btn-secondary">Add</button>
+                            <button type="button" id="btn-subtract" class="btn btn-secondary">Subtract</button>
+                            <button type="button" id="btn-compare" class="btn btn-secondary">Compare</button>
+                        </div>
+                    </form>
+
+                    <div id="result-container" class="result-container hidden">
+                        <h3>Result</h3>
+                        <p id="result-text"></p>
+                    </div>
+                    
+                    <div id="error-container" class="error-container hidden">
+                        <p id="error-text"></p>
+                    </div>
+                </section>
+            </main>
+        </div>
+        
+        <footer>
+            <p>&copy; 2026 Quantity Measurement App.</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
