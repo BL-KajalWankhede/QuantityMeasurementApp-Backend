@@ -156,7 +156,7 @@ export function DashboardPage() {
           <h2 className="section-title">Result</h2>
           <div className="result-display">
             <span className="result-value">
-              {result?.resultValue?.toLocaleString(undefined, { maximumFractionDigits: 4 }) || result?.resultString || '0'}
+              {submitting ? '...' : (result?.resultValue?.toLocaleString(undefined, { maximumFractionDigits: 4 }) || result?.resultString || '0')}
             </span>
             <div className="result-unit-box">
               {result?.resultUnit || 'Unit'}
