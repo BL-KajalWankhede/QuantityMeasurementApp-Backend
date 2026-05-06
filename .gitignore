@@ -44,12 +44,6 @@ Thumbs.db
 *.log
 logs/
 
-# Docker (Optional/Not required for repo)
-Dockerfile
-docker-compose.yml
-.dockerignore
-**/docker/
-
 # IDE - Eclipse
 .project
 .classpath
