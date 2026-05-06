@@ -12,7 +12,7 @@ import java.util.List;
 
 @Configuration
 public class GatewayCorsConfig {
-    @Value("${app.cors.allowed-origins:http://localhost:5173,http://localhost:3000,http://localhost:8000,http://127.0.0.1:8000}")
+    @Value("${app.cors.allowed-origins:https://quantitymeasurementapp-p0gz.onrender.com,http://localhost:5173,http://localhost:3000,http://localhost:8000,http://127.0.0.1:8000}")
     private String corsAllowedOrigins;
 
     @Bean

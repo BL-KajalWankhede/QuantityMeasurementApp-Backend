@@ -38,7 +38,7 @@ echo   ALL SERVICES ARE STARTING UP
 echo ==========================================
 echo 1. Monitor Registry: http://localhost:8761
 echo 2. API Documentation: http://localhost:4000/swagger
-echo 3. Open Application: http://localhost:5173
+echo 3. Open Application: https://quantitymeasurementapp-p0gz.onrender.com
 echo.
 echo Note: It may take up to 60 seconds for all services 
 echo to fully register and become reachable via Gateway.

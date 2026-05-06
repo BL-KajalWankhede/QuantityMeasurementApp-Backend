@@ -28,7 +28,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
-    @Value("${app.oauth2.frontend-origin:http://localhost:5173}")
+    @Value("${app.oauth2.frontend-origin:https://quantitymeasurementapp-p0gz.onrender.com}")
     private String frontendOrigin;
 
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, OAuth2SuccessHandler oAuth2SuccessHandler) {
