@@ -29,7 +29,7 @@ QuantityMeasurementApp/
 ├── QMA-Service/      # Core Quantity Measurement Service
 ├── QMA-Client/       # React (Vite) Frontend Application
 ├── QMA-Frontend/     # Vanilla JS Frontend (Legacy)
-└── run-all.bat       # Orchestration script for local dev
+└── run-all.bat       # script for local dev
 ```
 
 ---
@@ -139,15 +139,3 @@ Once the services are running, you can access the interactive Swagger documentat
 **Kajal Wankhede**
 - GitHub: [@BL-KajalWankhede](https://github.com/BL-KajalWankhede)
 ---
-
-## 🛠️ Troubleshooting
-
-- **JWT Secret Exception:** If the application fails to start with a "Weak Key" error, ensure your `QMA_JWT_SECRET` is at least **32 characters** long.
-- **Service Not Found (404/503):** After starting the services, wait about **60 seconds** for them to fully register with the Eureka Registry before trying to access them through the Gateway.
-- **CORS Errors:** If you are running the frontend on a different port than `5173`, make sure to update the `app.cors.allowed-origins` in your backend properties.
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
