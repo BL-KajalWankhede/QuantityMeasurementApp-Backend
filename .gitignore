@@ -1,0 +1,65 @@
+# Java / Maven
+**/target/
+*.class
+*.jar
+*.war
+*.ear
+.mvn/
+mvnw
+mvnw.cmd
+HELP.md
+
+# Node / React
+**/node_modules/
+**/dist/
+**/build/
+**/.vite/
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Databases
+*.db
+*.mv.db
+*.trace.db
+**/data/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# Docker (Optional/Not required for repo)
+Dockerfile
+docker-compose.yml
+.dockerignore
+**/docker/
+
+# IDE - Eclipse
+.project
+.classpath
+.factorypath
+.settings/
+
+# Temp / Backup
+*.bak
+*.tmp
+*.temp
+bin/
+out/
+.history/

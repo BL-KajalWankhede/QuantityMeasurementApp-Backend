@@ -15,7 +15,7 @@ export const authService = {
     if (res && (res as any).accessToken) localStorage.setItem('qma_token', (res as any).accessToken)
     return res
   },
-  getSession: () => apiClient.get<UserProfile | undefined>('/api/v1/auth/me'),
+  getSession: () => apiClient.get<UserProfile | undefined>('/api/v1/users/me'),
   logout: async () => {
     localStorage.removeItem('qma_token')
     await apiClient.post<void>('/api/v1/auth/logout').catch(() => {})

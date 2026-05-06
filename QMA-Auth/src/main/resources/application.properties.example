@@ -1,0 +1,11 @@
+spring.application.name=qma-auth
+quantity.measurement.repository.type=database
+quantity.measurement.database.url=jdbc:h2:file:./data/qma-auth;DB_CLOSE_ON_EXIT=FALSE
+quantity.measurement.database.username=sa
+quantity.measurement.database.password=
+quantity.measurement.database.pool.initial-size=1
+quantity.measurement.database.pool.max-size=5
+quantity.measurement.database.pool.connection-timeout-millis=5000
+quantity.measurement.database.schema-location=db/schema.sql
+
+logging.level.root=INFO
