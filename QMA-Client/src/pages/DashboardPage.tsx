@@ -3,7 +3,7 @@ import { UNITS_BY_TYPE } from '../constants/units'
 import type { MeasurementType, OperationType } from '../constants/units'
 import { quantityService } from '../services/quantityService'
 import type { QuantityMeasurementHistory } from '../types'
-import { Ruler, Scale, Thermometer, Droplets, Plus, Minus, ArrowRightLeft, Equal } from 'lucide-react'
+import { Ruler, Scale, Thermometer, Droplets, Plus, Minus, Divide, ArrowRightLeft, Equal } from 'lucide-react'
 import '../styles/dashboard.scss'
 
 const MEASUREMENT_TYPES_UI = [
@@ -17,7 +17,7 @@ export function DashboardPage() {
   const isFirstRender = useRef(true)
   const [measurementType, setMeasurementType] = useState<MeasurementType>('LENGTH')
   const [actionCategory, setActionCategory] = useState<'CONVERT' | 'COMPARE' | 'ARITHMETIC'>('CONVERT')
-  const [arithmeticOp, setArithmeticOp] = useState<'ADD' | 'SUBTRACT'>('ADD')
+  const [arithmeticOp, setArithmeticOp] = useState<'ADD' | 'SUBTRACT' | 'DIVIDE'>('ADD')
   
   const [leftValue, setLeftValue] = useState('')
   const [leftUnit, setLeftUnit] = useState(UNITS_BY_TYPE.LENGTH[0])
@@ -133,8 +133,16 @@ export function DashboardPage() {
             {actionCategory === 'CONVERT' && <ArrowRightLeft size={20} />}
             {actionCategory === 'COMPARE' && <Equal size={20} />}
             {actionCategory === 'ARITHMETIC' && (
-              <button onClick={() => setArithmeticOp(prev => prev === 'ADD' ? 'SUBTRACT' : 'ADD')}>
-                {arithmeticOp === 'ADD' ? <Plus size={20} /> : <Minus size={20} />}
+              <button onClick={() => {
+                setArithmeticOp(prev => {
+                  if (prev === 'ADD') return 'SUBTRACT'
+                  if (prev === 'SUBTRACT') return 'DIVIDE'
+                  return 'ADD'
+                })
+              }}>
+                {arithmeticOp === 'ADD' && <Plus size={20} />}
+                {arithmeticOp === 'SUBTRACT' && <Minus size={20} />}
+                {arithmeticOp === 'DIVIDE' && <Divide size={20} />}
               </button>
             )}
           </div>

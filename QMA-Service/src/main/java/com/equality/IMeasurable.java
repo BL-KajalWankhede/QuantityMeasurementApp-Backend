@@ -1,6 +1,5 @@
 package com.equality;
 
-
 import java.util.Locale;
 
 public interface IMeasurable {

@@ -9,10 +9,10 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@OpenAPIDefinition(info = @Info(title = "QMA Auth API", version = "v1", description = "Spring Boot REST API for authentication and user profile"))
 public class QmaServerApplication {
 
     public static void main(String[] args) {
+        System.out.println(">>> QMA-AUTH STARTING WITH LATEST CODE VERSION 3 <<<");
         SpringApplication.run(QmaServerApplication.class, args);
     }
 

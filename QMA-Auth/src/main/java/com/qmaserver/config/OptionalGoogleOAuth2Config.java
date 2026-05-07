@@ -1,38 +1,32 @@
 package com.qmaserver.config;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
-import org.springframework.security.config.oauth2.client.CommonOAuth2Provider;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import com.qmaserver.quantitymeasurement.auth.OAuth2SuccessHandler;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.stereotype.Component;
 
-@Configuration
+/**
+ * This component provides optional Google OAuth2 configuration.
+ * It is separated from the main SecurityConfig to keep the project modular.
+ */
+@Component
 public class OptionalGoogleOAuth2Config {
 
-    @Bean
-    ClientRegistrationRepository clientRegistrationRepository(
-            @Value("${app.oauth2.google.client-id:}") String clientId,
-            @Value("${app.oauth2.google.client-secret:}") String clientSecret,
-            @Value("${app.oauth2.google.auth-redirect-uri:http://localhost:4000/login/oauth2/code/google}") String redirectUri) {
-        if (clientId.isBlank() || clientSecret.isBlank()) {
-            return registrationId -> null;
-        }
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
-        ClientRegistration googleRegistration = CommonOAuth2Provider.GOOGLE.getBuilder("google")
-                .clientId(clientId)
-                .clientSecret(clientSecret)
-                .redirectUri(redirectUri)
-                .scope("openid", "profile", "email")
-                .build();
-
-        return registrationId -> "google".equals(registrationId) ? googleRegistration : null;
+    public OptionalGoogleOAuth2Config(OAuth2SuccessHandler oAuth2SuccessHandler) {
+        this.oAuth2SuccessHandler = oAuth2SuccessHandler;
     }
 
-    @Bean
-    OAuth2AuthorizedClientService authorizedClientService(ClientRegistrationRepository clientRegistrationRepository) {
-        return new InMemoryOAuth2AuthorizedClientService(clientRegistrationRepository);
+    /**
+     * Applies the Google OAuth2 login configuration to the HttpSecurity object.
+     */
+    public void configure(HttpSecurity http) throws Exception {
+        http.oauth2Login(oauth2 -> oauth2
+                .authorizationEndpoint(authorization -> authorization
+                        .baseUri("/oauth2/authorization"))
+                .redirectionEndpoint(redirection -> redirection
+                        .baseUri("/login/oauth2/code/*"))
+                .successHandler(oAuth2SuccessHandler)
+        );
     }
 }

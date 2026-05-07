@@ -1,141 +1,102 @@
-# Quantity Measurement Application (QMA)
+# 📏 Quantity Measurement Application (QMA) - Full Stack Microservices
 
-A robust, microservices-based application designed for precision unit conversions and comparisons. This project demonstrates a modern cloud-native architecture using Spring Cloud, React, and PostgreSQL.
+![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-brightgreen.svg)
+![React](https://img.shields.io/badge/React-18-blue.svg)
+![Microservices](https://img.shields.io/badge/Architecture-Microservices-orange.svg)
 
-## 🚀 Live Demo
-**Frontend (React):** [https://quantitymeasurementapp-p0gz.onrender.com](https://quantitymeasurementapp-p0gz.onrender.com)
-
----
-
-## 🏗️ Architecture Overview
-
-The application is built using a **Microservices Architecture** to ensure scalability, fault tolerance, and independent deployment.
-
-- **Service Registry (QMA-Registry):** Powered by Netflix Eureka for dynamic service discovery.
-- **API Gateway (QMA-API):** Built with Spring Cloud Gateway for centralized routing, load balancing, and security.
-- **Auth Service (QMA-Auth):** Handles user registration, JWT-based authentication, and Google OAuth2 integration.
-- **Quantity Service (QMA-Service):** Core business logic for unit conversions (Length, Weight, Volume, Temperature).
-- **React Client (QMA-Client):** A premium, responsive dashboard built with Vite, React, and Tailwind CSS.
+**Quantity Measurement App (QMA)** is a high-end, industrial-grade application designed for precision unit conversions and comparisons across Length, Weight, Volume, and Temperature. This project is built on a modern **Cloud-Native Architecture** featuring five microservices and a premium React-based workspace.
 
 ---
 
-## 📂 Project Structure
+## 🚀 Live Environment
+*   **Production Frontend:** [https://quantitymeasurementapp-p0gz.onrender.com](https://quantitymeasurementapp-p0gz.onrender.com)
+
+*   **API Gateway:** Hosted on Port 4000 (Centralized Access Point)
+
+*   **Interactive API Docs (Swagger):** http://localhost:4000/swagger 
+
+---
+
+## 🏗️ The Microservices Ecosystem
+
+The system is architected as a distributed ecosystem to ensure high availability and modular scaling:
+
+1.  **`QMA-Registry` (Discovery Server):** Uses Netflix Eureka. Every service registers here automatically so they can "talk" to each other without hardcoded URLs.
+2.  **`QMA-API` (Gateway):** The single entry point for the frontend. It handles routing, CORS, and security filtering.
+3.  **`QMA-Auth` (Identity Provider):** A specialized service for security. It handles JWT generation, User registration, and a **Modular Google OAuth2** integration.
+4.  **`QMA-Service` (Business Logic):** The core calculation engine. It handles complex unit conversion mathematics and arithmetic operations (e.g., adding 1 liter to 1 gallon).
+5.  **`QMA-Client` (Premium Frontend):** A state-of-the-art React application featuring:
+    *   **Professional Split-Screen Auth:** A clean, high-end branding sidebar and centered login/signup forms.
+    *   **Advanced Dashboard:** A unified workspace for real-time conversions and history tracking.
+
+---
+
+## ✨ Key Features
+
+*   **⚡ Precision Conversions:** Highly accurate conversions between Inch/Feet/Yard, Kg/Gram/Ton, Litre/Gallon, and Temperature.
+*   **📊 History Tracking:** Every conversion is automatically saved to your profile for future reference.
+*   **🛡️ Multi-Method Auth:** Secure login via traditional Email/Password or the ultra-fast **Continue with Google** (OAuth2).
+*   **🎨 Premium UI/UX:** A professional "Indigo & Teal" design language with responsive split-screen layouts and custom SCSS styling.
+*   **⚙️ Modular Security:** A dedicated `OptionalGoogleOAuth2Config` class that separates social login logic for easier maintenance.
+*   **🔗 Service-to-Service Communication:** Uses Feign Clients for secure data exchange between the Gateway, Auth, and Quantity services.
+
+---
+
+## 🛠️ Technology Stack
+
+### **Backend (The Core)**
+*   **Java 21 / Spring Boot 3.x**
+*   **Spring Cloud:** Gateway, Netflix Eureka, OpenFeign.
+*   **Database:** PostgreSQL (Cloud-hosted on Aiven).
+*   **Security:** Spring Security, JWT (Stateless), Google OAuth2.
+*   **Docs:** SpringDoc / OpenAPI (Swagger).
+
+### **Frontend (The Experience)**
+*   **React 18 / Vite** (Lightning-fast builds).
+*   **State Management:** React Context API & Hooks.
+*   **Styling:** Custom SCSS with a professional design system (Inter & Space Grotesk fonts).
+*   **Icons:** Lucide-React.
+
+---
+
+## 📂 Project Organization
 
 ```text
 QuantityMeasurementApp/
-├── QMA-Registry/     # Eureka Service Discovery Server
-├── QMA-API/          # Spring Cloud API Gateway
-├── QMA-Auth/         # User Authentication & OAuth2 Service
-├── QMA-Service/      # Core Quantity Measurement Service
-├── QMA-Client/       # React (Vite) Frontend Application
-├── QMA-Frontend/     # Vanilla JS Frontend (Legacy)
-└── run-all.bat       # script for local dev
+├── QMA-Registry/     # Eureka Service Discovery Server (Port 8761)
+├── QMA-API/          # API Gateway (Port 4000)
+├── QMA-Auth/         # Identity & Security Service (Port 5000)
+├── QMA-Service/      # Core Mathematics & Models (Port 6000)
+├── QMA-Client/       # Premium React Application (Port 5173)
+├── run-all.bat       # Orchestration script to launch all services
+└── README.md         # You are here!
 ```
 
 ---
 
-## 🛠️ Tech Stack
+## 🚦 Getting Started (Local Development)
 
-### **Backend**
-- **Framework:** Spring Boot 3.x
-- **Microservices:** Spring Cloud (Gateway, Eureka, OpenFeign)
-- **Security:** Spring Security, JWT, OAuth2 (Google)
-- **Database:** PostgreSQL (Hosted on Aiven Cloud)
-- **Documentation:** SpringDoc / Swagger UI
-
-### **Frontend**
-- **React (Vite):** Modern UI with hooks and context API.
-- **Styling:** Vanilla CSS / SCSS (Custom Premium Design).
-- **Icons:** Lucide-React.
-
----
-
-## 🔑 Environment Variables
-
-To run this project in production or a different local environment, ensure the following variables are configured in your `application.properties` or system environment:
-
-### **Backend (Auth & Service)**
-| Variable | Description |
-| :--- | :--- |
-| `QMA_DB_URL` | PostgreSQL connection string (Aiven/Local) |
-| `QMA_DB_USERNAME` | Database username |
-| `QMA_DB_PASSWORD` | Database password |
-| `GOOGLE_CLIENT_ID` | Google OAuth2 Client ID |
-| `GOOGLE_CLIENT_SECRET`| Google OAuth2 Client Secret |
-| `QMA_JWT_SECRET` | Secret key for signing JWT tokens |
-| `QMA_FRONTEND_ORIGIN` | URL of the React frontend (for CORS) |
-
-### **Frontend (React)**
-| Variable | Description |
-| :--- | :--- |
-| `VITE_API_BASE_URL` | The URL of the API Gateway (Port 4000) |
-
----
-
-## ✨ Features
-
-- **Unit Conversion:** Convert between various units in Length (Inch, Feet, Yard), Weight (Kg, Gram, Ton), Volume (Litre, Gallon, Ml), and Temperature.
-- **Arithmetic Operations:** Add or subtract quantities of the same type (e.g., 1 Gallon + 3.78 Litres).
-- **Comparison:** Check equality between different unit representations.
-- **User Dashboard:** Secure login and history tracking for all measurement operations.
-- **Social Login:** Quick access via Google OAuth2.
-- **Service Discovery:** Automatic registration and health monitoring via Eureka.
-
----
-
-## 🚦 Getting Started
-
-### **Prerequisites**
-- Java 21+
-- Node.js 18+
-- Maven 3.9+
-- Docker (Optional)
-
-### **Local Execution**
-The project includes a convenient script to launch all services simultaneously:
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/BL-KajalWankhede/QuantityMeasurementApp.git
-   cd QuantityMeasurementApp
-   ```
-2. Run the orchestration script:
-   ```bash
-   ./run-all.bat
-   ```
-
-### **Service Ports**
-| Service | Port | Description |
-| :--- | :--- | :--- |
-| `QMA-Registry` | 8761 | Eureka Dashboard |
-| `QMA-API` | 4000 | API Gateway / Swagger |
-| `QMA-Auth` | 5000 | Auth Microservice |
-| `QMA-Service` | 6000 | Quantity Microservice |
-| `QMA-Client` | 5173 | React Frontend |
-
----
-
-## 🐳 Docker Deployment
-
-Each microservice is containerized. To build and run using Docker:
-
-```bash
-# Build a service (example: Auth)
-cd QMA-Auth
-docker build -t qma-auth .
-docker run -p 5000:5000 qma-auth
+### **1. Launching the Services**
+You don't need to start every service manually. Use the provided automation script:
+```powershell
+./run-all.bat
 ```
+This script will sequentially launch the Registry, API, Auth, Service, and Frontend.
 
----
-
-## 📖 API Documentation
-
-Once the services are running, you can access the interactive Swagger documentation at:
-`http://localhost:4000/swagger`
+### **2. Database Setup**
+Ensure your `application.properties` in `QMA-Auth` and `QMA-Service` point to your PostgreSQL instance.
+```properties
+spring.datasource.url=jdbc:postgresql://your-db-url:port/quantity_measurement
+spring.datasource.username=root
+spring.datasource.password=your_password
+```
 
 ---
 
 ## 👤 Author
 **Kajal Wankhede**
-- GitHub: [@BL-KajalWankhede](https://github.com/BL-KajalWankhede)
----
+*   **GitHub:** [@BL-KajalWankhede](https://github.com/BL-KajalWankhede)
+*   **Portfolio:** [Project Link](https://quantitymeasurementapp-p0gz.onrender.com)
+
+

@@ -22,92 +22,92 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 class QmaServerApplicationTests {
 
-    @Autowired
-    private WebApplicationContext webApplicationContext;
+        @Autowired
+        private WebApplicationContext webApplicationContext;
 
-    @Autowired
-    private QuantityMeasurementRepository repository;
+        @Autowired
+        private QuantityMeasurementRepository repository;
 
-    private MockMvc mockMvc;
+        private MockMvc mockMvc;
 
-    @BeforeEach
-    void setUp() {
-        repository.deleteAll();
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-    }
+        @BeforeEach
+        void setUp() {
+                repository.deleteAll();
+                mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        }
 
-    @Test
-    void contextLoads() {
-    }
+        @Test
+        void contextLoads() {
+        }
 
-    @Test
-    void testRestEndpointAddQuantities() throws Exception {
-        String body = """
-                {
-                  "thisQuantityDTO": {"value": 1.0, "unit": "FEET", "measurementType": "LENGTH"},
-                  "thatQuantityDTO": {"value": 12.0, "unit": "INCH", "measurementType": "LENGTH"}
-                }
-                """;
+        @Test
+        void testRestEndpointAddQuantities() throws Exception {
+                String body = """
+                                {
+                                  "thisQuantityDTO": {"value": 1.0, "unit": "FEET", "measurementType": "LENGTH"},
+                                  "thatQuantityDTO": {"value": 12.0, "unit": "INCH", "measurementType": "LENGTH"}
+                                }
+                                """;
 
-        mockMvc.perform(post("/api/v1/quantities/add")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(body))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.operation").value("ADD"))
-                .andExpect(jsonPath("$.resultValue").value(2.0))
-                .andExpect(jsonPath("$.resultUnit").value("FEET"));
-    }
+                mockMvc.perform(post("/api/v1/quantities/add")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(body))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.operation").value("ADD"))
+                                .andExpect(jsonPath("$.resultValue").value(2.0))
+                                .andExpect(jsonPath("$.resultUnit").value("FEET"));
+        }
 
-    @Test
-    void testActuatorHealthEndpoint() throws Exception {
-        mockMvc.perform(get("/actuator/health"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value("UP"));
-    }
+        @Test
+        void testActuatorHealthEndpoint() throws Exception {
+                mockMvc.perform(get("/actuator/health"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.status").value("UP"));
+        }
 
-    @Test
-    void testOpenApiDocumentation() throws Exception {
-        mockMvc.perform(get("/api-docs"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.paths").exists());
-    }
+        @Test
+        void testOpenApiDocumentation() throws Exception {
+                mockMvc.perform(get("/api-docs"))
+                                .andExpect(status().isOk())
+                                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                                .andExpect(jsonPath("$.paths").exists());
+        }
 
-    @Test
-    void testIntegrationHistoryAndCount() throws Exception {
-        String compareBody = """
-                {
-                  "thisQuantityDTO": {"value": 1.0, "unit": "FEET", "measurementType": "LENGTH"},
-                  "thatQuantityDTO": {"value": 12.0, "unit": "INCH", "measurementType": "LENGTH"}
-                }
-                """;
+        @Test
+        void testIntegrationHistoryAndCount() throws Exception {
+                String compareBody = """
+                                {
+                                  "thisQuantityDTO": {"value": 1.0, "unit": "FEET", "measurementType": "LENGTH"},
+                                  "thatQuantityDTO": {"value": 12.0, "unit": "INCH", "measurementType": "LENGTH"}
+                                }
+                                """;
 
-        mockMvc.perform(post("/api/v1/quantities/compare")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(compareBody)).andExpect(status().isOk());
+                mockMvc.perform(post("/api/v1/quantities/compare")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(compareBody)).andExpect(status().isOk());
 
-        mockMvc.perform(get("/api/v1/quantities/history/operation/COMPARE"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(greaterThanOrEqualTo(1)));
+                mockMvc.perform(get("/api/v1/quantities/history/operation/COMPARE"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.length()").value(greaterThanOrEqualTo(1)));
 
-        mockMvc.perform(get("/api/v1/quantities/count/COMPARE"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("1"));
-    }
+                mockMvc.perform(get("/api/v1/quantities/count/COMPARE"))
+                                .andExpect(status().isOk())
+                                .andExpect(content().string("1"));
+        }
 
-    @Test
-    void testExceptionHandlingGlobalHandler() throws Exception {
-        String body = """
-                {
-                  "thisQuantityDTO": {"value": 1.0, "unit": "FEET", "measurementType": "LENGTH"},
-                  "thatQuantityDTO": {"value": 1.0, "unit": "KILOGRAM", "measurementType": "WEIGHT"}
-                }
-                """;
+        @Test
+        void testExceptionHandlingGlobalHandler() throws Exception {
+                String body = """
+                                {
+                                  "thisQuantityDTO": {"value": 1.0, "unit": "FEET", "measurementType": "LENGTH"},
+                                  "thatQuantityDTO": {"value": 1.0, "unit": "KILOGRAM", "measurementType": "WEIGHT"}
+                                }
+                                """;
 
-        mockMvc.perform(post("/api/v1/quantities/add")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(body))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value("Quantity Measurement Error"));
-    }
+                mockMvc.perform(post("/api/v1/quantities/add")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(body))
+                                .andExpect(status().isBadRequest())
+                                .andExpect(jsonPath("$.error").value("Quantity Measurement Error"));
+        }
 }

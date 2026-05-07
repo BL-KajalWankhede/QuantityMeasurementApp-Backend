@@ -11,18 +11,17 @@ export const authService = {
     return res
   },
   signup: async (payload: SignupInput) => {
-    const res = await apiClient.post<AuthResponse>('/api/v1/auth/signup', payload)
-    if (res && (res as any).accessToken) localStorage.setItem('qma_token', (res as any).accessToken)
-    return res
+    return apiClient.post<AuthResponse>('/api/v1/auth/signup', payload)
   },
   getSession: () => apiClient.get<UserProfile | undefined>('/api/v1/users/me'),
   logout: async () => {
     localStorage.removeItem('qma_token')
-    await apiClient.post<void>('/api/v1/auth/logout').catch(() => {})
+    await apiClient.post<void>('/api/v1/auth/logout').catch(() => { })
   },
   startGoogleLogin: () => {
+    localStorage.removeItem('qma_token') // Clear stale tokens
     sessionStorage.setItem('qma_oauth_in_progress', '1')
-    const oauthUrl = `${API_BASE_URL}/oauth2/authorization/google`
-    window.location.assign(oauthUrl)
+    // Go via API Gateway (4000) so the cookie is set for the gateway origin
+    window.location.assign('http://localhost:4000/oauth2/authorization/google')
   },
 }

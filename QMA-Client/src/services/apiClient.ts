@@ -1,6 +1,5 @@
-import { API_BASE_URL } from '../env'
-
-const baseUrl = API_BASE_URL.replace(/\/+$/, '')
+// Hardcoded for local testing to ensure the Gateway (4000) is always used
+const baseUrl = 'http://localhost:4000'
 
 type RequestOptions = RequestInit & {
   auth?: boolean

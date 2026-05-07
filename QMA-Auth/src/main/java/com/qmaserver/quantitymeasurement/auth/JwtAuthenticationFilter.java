@@ -32,12 +32,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        String username;
+        String username = null;
         try {
             username = jwtService.extractUsername(token);
         } catch (Exception exception) {
-            filterChain.doFilter(request, response);
-            return;
+            // If header token is invalid, try resolving from cookie
+            String cookieToken = resolveFromCookie(request);
+            if (cookieToken != null && !cookieToken.equals(token)) {
+                try {
+                    username = jwtService.extractUsername(cookieToken);
+                    token = cookieToken;
+                } catch (Exception ignored) {}
+            }
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null
@@ -57,11 +63,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private String resolveToken(HttpServletRequest request) {
+        String token = resolveFromHeader(request);
+        if (token == null) {
+            token = resolveFromCookie(request);
+            if (token != null) System.out.println("DEBUG: Authenticating via Cookie");
+        } else {
+            System.out.println("DEBUG: Authenticating via Header");
+        }
+        return token;
+    }
+
+    private String resolveFromHeader(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             return authorizationHeader.substring(7);
         }
+        return null;
+    }
 
+    private String resolveFromCookie(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         if (cookies == null) {
             return null;

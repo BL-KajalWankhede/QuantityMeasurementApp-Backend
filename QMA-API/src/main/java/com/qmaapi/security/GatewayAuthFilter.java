@@ -32,30 +32,37 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path = exchange.getRequest().getURI().getPath();
-
-        if (!requiresAuthentication(path, exchange.getRequest().getMethod())) {
-            return chain.filter(exchange);
-        }
-
         String token = resolveToken(exchange.getRequest());
-        if (token == null || token.isBlank()) {
-            return unauthorized(exchange.getResponse(), "Missing authentication token");
+        
+        Optional<String> email = Optional.empty();
+        if (token != null && !token.isBlank()) {
+            email = gatewayJwtService.extractEmailIfValid(token);
         }
 
-        Optional<String> email = gatewayJwtService.extractEmailIfValid(token);
-        if (email.isEmpty()) {
-            return unauthorized(exchange.getResponse(), "Invalid or expired authentication token");
+        // If authentication is strictly required but missing/invalid
+        if (requiresAuthentication(path, exchange.getRequest().getMethod())) {
+            if (token == null || token.isBlank()) {
+                return unauthorized(exchange.getResponse(), "Missing authentication token");
+            }
+            if (email.isEmpty()) {
+                return unauthorized(exchange.getResponse(), "Invalid or expired authentication token");
+            }
         }
 
-        String finalToken = token;
-        ServerHttpRequest request = exchange.getRequest().mutate()
-                .headers(headers -> {
-                    headers.set(USER_EMAIL_HEADER, email.get());
-                    headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + finalToken);
-                })
-                .build();
+        // If we found a valid user, always add the header (even for public endpoints)
+        if (email.isPresent()) {
+            String finalToken = token;
+            String finalEmail = email.get();
+            ServerHttpRequest request = exchange.getRequest().mutate()
+                    .headers(headers -> {
+                        headers.set(USER_EMAIL_HEADER, finalEmail);
+                        headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + finalToken);
+                    })
+                    .build();
+            return chain.filter(exchange.mutate().request(request).build());
+        }
 
-        return chain.filter(exchange.mutate().request(request).build());
+        return chain.filter(exchange);
     }
 
     @Override
@@ -68,7 +75,10 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
                 || path.startsWith("/api/v1/auth") 
                 || path.startsWith("/api/v1/quantities")
                 || path.startsWith("/login/oauth2")
-                || path.startsWith("/oauth2")) {
+                || path.startsWith("/oauth2")
+                || path.startsWith("/swagger")
+                || path.startsWith("/v3/api-docs")
+                || path.startsWith("/api-docs")) {
             return false;
         }
         return path.startsWith("/api/v1/users") || path.startsWith("/api/v1/history");

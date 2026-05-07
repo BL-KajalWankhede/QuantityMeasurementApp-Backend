@@ -42,9 +42,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async (name: string, email: string, password: string, picture?: string) => {
       await authService.signup({ name, email, password, picture: picture || null })
       sessionStorage.removeItem('qma_oauth_in_progress')
-      await refreshSession(true)
     },
-    [refreshSession],
+    [],
   )
 
   const logout = useCallback(async () => {

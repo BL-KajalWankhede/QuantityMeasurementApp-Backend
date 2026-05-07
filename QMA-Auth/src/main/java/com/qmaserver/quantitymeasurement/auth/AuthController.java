@@ -32,12 +32,8 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public AuthResponse signup(@Valid @RequestBody SignupRequest request, HttpServletRequest httpServletRequest,
-            HttpServletResponse httpServletResponse) {
-        AuthResponse authResponse = authService.signup(request);
-        authCookieUtil.addAuthCookie(httpServletResponse, authResponse.getAccessToken(),
-                jwtService.getJwtExpirationMs(), httpServletRequest.isSecure());
-        return authResponse;
+    public AuthResponse signup(@Valid @RequestBody SignupRequest request) {
+        return authService.signup(request);
     }
 
     @PostMapping("/login")

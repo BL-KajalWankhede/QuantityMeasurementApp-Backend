@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/useAuth'
-import { Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff, Ruler } from 'lucide-react'
 import '../styles/auth.scss'
 
 export function LoginPage() {
@@ -38,65 +38,72 @@ export function LoginPage() {
 
   return (
     <div className="auth-page-wrapper">
-      <div className="auth-card">
-        <header>
-          <h1>Quantity Measurement</h1>
-          <p>Login to access your professional dashboard</p>
-        </header>
+      <header className="external-header">
+        <div className="brand-icon-box">
+          <Ruler size={40} strokeWidth={1.5} />
+        </div>
+        <h1>Quantity <span>Measurement</span></h1>
+        <div className="title-underline"></div>
+        <p>Precision in every unit, excellence in every calculation.</p>
+      </header>
 
-        <div id="login-form-container">
-          <h3>Login</h3>
-          <form id="login-form" onSubmit={handleSubmit}>
-            <div className="input-section">
-              <label htmlFor="login-email">Email</label>
-              <input
-                type="email"
-                id="login-email"
-                placeholder="email@example.com"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <label htmlFor="login-password">Password</label>
-              <div className="password-input-wrapper">
+      <div className="auth-card-container">
+        <div className="auth-card">
+          <div id="login-form-container">
+            <h3>Login</h3>
+            <p className="subtitle">Enter your email and password to access your account</p>
+            <form id="login-form" onSubmit={handleSubmit}>
+              <div className="input-section">
+                <label htmlFor="login-email">Email</label>
                 <input
-                  type={showPassword ? 'text' : 'password'}
-                  id="login-password"
-                  placeholder="Enter password"
+                  type="email"
+                  id="login-email"
+                  placeholder="Email Address"
                   required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
-                <button
-                  type="button"
-                  className="password-toggle-btn"
-                  onClick={() => setShowPassword(!showPassword)}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
+                <label htmlFor="login-password">Password</label>
+                <div className="password-input-wrapper">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    id="login-password"
+                    placeholder="Password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="password-toggle-btn"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
               </div>
-            </div>
 
-            {error && <div className="auth-error-msg">{error}</div>}
+              {error && <div className="auth-error-msg">{error}</div>}
 
-            <button type="submit" disabled={submitting} className="btn btn-primary">
-              {submitting ? 'Logging in...' : 'Login'}
+              <button type="submit" disabled={submitting} className="btn btn-primary">
+                {submitting ? 'Logging in...' : 'Login'}
+              </button>
+            </form>
+
+            <button type="button" onClick={startGoogleLogin} className="btn btn-google">
+              <img 
+                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
+                alt="Google" 
+                style={{ width: '16px' }}
+              />
+              Continue with Google
             </button>
-          </form>
 
-          <button type="button" onClick={startGoogleLogin} className="btn btn-google">
-            <img 
-              src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
-              alt="Google" 
-              style={{ width: '16px' }}
-            />
-            Continue with Google
-          </button>
-
-          <p className="auth-toggle">
-            Don't have an account? <Link to="/signup">Sign Up</Link>
-          </p>
+            <p className="auth-toggle">
+              Don't have an account? <Link to="/signup">Sign Up</Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>

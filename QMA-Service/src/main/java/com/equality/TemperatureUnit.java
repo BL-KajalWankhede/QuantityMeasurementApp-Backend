@@ -10,7 +10,7 @@ public enum TemperatureUnit implements IMeasurable {
 
     private final Function<Double, Double> toCelsius;
     private final Function<Double, Double> fromCelsius;
-    private final SupportsArithmetic supportsArithmetic = () -> false;
+    private final SupportsArithmetic supportsArithmetic = () -> true;
 
     TemperatureUnit(Function<Double, Double> toCelsius, Function<Double, Double> fromCelsius) {
         this.toCelsius = toCelsius;
@@ -50,6 +50,6 @@ public enum TemperatureUnit implements IMeasurable {
 
     @Override
     public void validateOperationSupport(String operation) {
-        throw new UnsupportedOperationException("Temperature does not support " + operation.toLowerCase());
+        // Now supporting arithmetic for temperatures as requested
     }
 }

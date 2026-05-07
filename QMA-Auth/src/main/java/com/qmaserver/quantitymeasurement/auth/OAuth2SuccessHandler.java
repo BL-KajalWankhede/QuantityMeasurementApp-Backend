@@ -56,8 +56,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         UserEntity savedUser = userRepository.save(user);
         JwtService.TokenPayload tokenPayload = jwtService.generateToken(savedUser);
 
+        System.out.println("DEBUG: OAuth2 Success for email: " + email);
         authCookieUtil.addAuthCookie(response, tokenPayload.token(), jwtService.getJwtExpirationMs(),
                 request.isSecure());
+        System.out.println("DEBUG: Redirecting to: " + redirectUri);
         response.sendRedirect(redirectUri);
     }
 

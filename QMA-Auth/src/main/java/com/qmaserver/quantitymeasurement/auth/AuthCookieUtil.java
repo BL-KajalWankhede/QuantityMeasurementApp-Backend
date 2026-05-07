@@ -19,10 +19,13 @@ public class AuthCookieUtil {
                 .httpOnly(true)
                 .secure(resolvedSecure)
                 .sameSite("Lax")
+                .domain("localhost")
                 .path("/")
                 .maxAge(Math.max(0, maxAgeMs / 1000))
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());
+        // Log for debugging
+        System.out.println("DEBUG: Cookie set - " + AUTH_COOKIE_NAME + " (Domain: localhost, Secure: " + resolvedSecure + ")");
     }
 
     public void clearAuthCookie(HttpServletResponse response, boolean secure) {
