@@ -21,7 +21,7 @@ export const authService = {
   startGoogleLogin: () => {
     localStorage.removeItem('qma_token') // Clear stale tokens
     sessionStorage.setItem('qma_oauth_in_progress', '1')
-    // Go via API Gateway (4000) so the cookie is set for the gateway origin
-    window.location.assign('http://localhost:4000/oauth2/authorization/google')
+    // Go via API Gateway so the cookie is set for the gateway origin
+    window.location.assign('https://quantitymeasurementapp-api-5be3.onrender.com/oauth2/authorization/google')
   },
 }
