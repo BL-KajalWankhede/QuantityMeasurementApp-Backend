@@ -75,7 +75,7 @@ services:
     env: static
     rootDir: QMA-Client
     buildCommand: npm install && npm run build
-    publishDir: dist
+    staticPublishDir: dist
     envVars:
       - key: VITE_API_BASE_URL
         fromService:
