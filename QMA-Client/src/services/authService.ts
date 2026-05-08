@@ -1,4 +1,4 @@
-import { API_BASE_URL, apiClient } from './apiClient'
+import { apiClient } from './apiClient'
 import type { AuthResponse, UserProfile } from '../types'
 
 type LoginInput = { email: string; password: string }

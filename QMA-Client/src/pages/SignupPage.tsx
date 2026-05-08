@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react'
-import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/useAuth'
 import { Eye, EyeOff, Ruler } from 'lucide-react'
 import '../styles/auth.scss'
 
 export function SignupPage() {
-  const { isAuthenticated, signup, logout, startGoogleLogin } = useAuth()
+  const { signup, logout, startGoogleLogin } = useAuth()
   const navigate = useNavigate()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
