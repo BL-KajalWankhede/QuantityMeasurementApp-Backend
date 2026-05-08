@@ -1,12 +1,11 @@
-services:
-  # 1. PostgreSQL Database
-  - type: database
-    name: qma-db
+databases:
+  - name: qma-db
     databaseName: quantity_measurement
     user: postgres
     plan: free
 
-  # 2. Service Registry (Eureka)
+services:
+  # 1. Service Registry (Eureka)
   - type: web
     name: qma-registry
     env: docker
@@ -15,7 +14,7 @@ services:
     plan: free
     healthCheckPath: /actuator/health
 
-  # 3. Auth Service
+  # 2. Auth Service
   - type: web
     name: QuantityMeasurementApp-Auth
     env: docker
@@ -36,7 +35,7 @@ services:
       - key: QMA_JWT_SECRET
         generateValue: true
 
-  # 4. Quantity Service
+  # 3. Quantity Service
   - type: web
     name: qma-service
     env: docker
@@ -55,7 +54,7 @@ services:
           name: qma-db
           property: connectionString
 
-  # 5. API Gateway
+  # 4. API Gateway
   - type: web
     name: qma-api
     env: docker
@@ -70,7 +69,7 @@ services:
           property: host
           suffix: :8761/eureka/
 
-  # 6. Frontend (React)
+  # 5. Frontend (React)
   - type: static
     name: QuantityMeasurementApp
     env: static
