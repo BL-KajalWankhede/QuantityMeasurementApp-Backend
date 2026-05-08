@@ -23,11 +23,7 @@ services:
     plan: free
     envVars:
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-        fromService:
-          name: qma-registry
-          type: web
-          property: host
-          suffix: /eureka/
+        value: https://qma-registry.onrender.com/eureka/
       - key: SPRING_DATASOURCE_URL
         fromDatabase:
           name: qma-db
@@ -44,11 +40,7 @@ services:
     plan: free
     envVars:
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-        fromService:
-          name: qma-registry
-          type: web
-          property: host
-          suffix: /eureka/
+        value: https://qma-registry.onrender.com/eureka/
       - key: SPRING_DATASOURCE_URL
         fromDatabase:
           name: qma-db
@@ -63,11 +55,7 @@ services:
     plan: free
     envVars:
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-        fromService:
-          name: qma-registry
-          type: web
-          property: host
-          suffix: /eureka/
+        value: https://qma-registry.onrender.com/eureka/
 
 staticSites:
   # 5. Frontend (React)
