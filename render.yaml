@@ -69,16 +69,9 @@ services:
           property: host
           suffix: /eureka/
 
+staticSites:
   # 5. Frontend (React)
-  - type: web
-    name: QuantityMeasurementApp
-    env: static
+  - name: QuantityMeasurementApp
     rootDir: QMA-Client
     buildCommand: npm install && npm run build
-    staticPublishDir: dist
-    envVars:
-      - key: VITE_API_BASE_URL
-        fromService:
-          name: qma-api
-          type: web
-          property: url
+    publishDir: dist
