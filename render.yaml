@@ -70,8 +70,9 @@ services:
           suffix: /eureka/
 
   # 5. Frontend (React)
-  - type: static_site
+  - type: web
     name: QuantityMeasurementApp
+    env: static
     rootDir: QMA-Client
     buildCommand: npm install && npm run build
     publishDir: dist
