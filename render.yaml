@@ -57,9 +57,10 @@ services:
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
         value: https://qma-registry.onrender.com/eureka/
 
-staticSites:
   # 5. Frontend (React)
-  - name: QuantityMeasurementApp
+  - type: web
+    name: QuantityMeasurementApp
+    env: static
     rootDir: QMA-Client
     buildCommand: npm install && npm run build
     publishDir: dist
