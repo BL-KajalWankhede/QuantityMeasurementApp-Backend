@@ -1,0 +1,85 @@
+services:
+  # 1. PostgreSQL Database
+  - type: database
+    name: qma-db
+    databaseName: quantity_measurement
+    user: postgres
+    plan: free
+
+  # 2. Service Registry (Eureka)
+  - type: web
+    name: qma-registry
+    env: docker
+    dockerContext: .
+    dockerfilePath: QMA-Registry/Dockerfile
+    plan: free
+    healthCheckPath: /actuator/health
+
+  # 3. Auth Service
+  - type: web
+    name: QuantityMeasurementApp-Auth
+    env: docker
+    dockerContext: .
+    dockerfilePath: QMA-Auth/Dockerfile
+    plan: free
+    envVars:
+      - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+        fromService:
+          name: qma-registry
+          type: web
+          property: host
+          suffix: :8761/eureka/
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: qma-db
+          property: connectionString
+      - key: QMA_JWT_SECRET
+        generateValue: true
+
+  # 4. Quantity Service
+  - type: web
+    name: qma-service
+    env: docker
+    dockerContext: .
+    dockerfilePath: QMA-Service/Dockerfile
+    plan: free
+    envVars:
+      - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+        fromService:
+          name: qma-registry
+          type: web
+          property: host
+          suffix: :8761/eureka/
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: qma-db
+          property: connectionString
+
+  # 5. API Gateway
+  - type: web
+    name: qma-api
+    env: docker
+    dockerContext: .
+    dockerfilePath: QMA-API/Dockerfile
+    plan: free
+    envVars:
+      - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+        fromService:
+          name: qma-registry
+          type: web
+          property: host
+          suffix: :8761/eureka/
+
+  # 6. Frontend (React)
+  - type: static
+    name: QuantityMeasurementApp
+    env: static
+    rootDir: QMA-Client
+    buildCommand: npm install && npm run build
+    publishDir: dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        fromService:
+          name: qma-api
+          type: web
+          property: host
