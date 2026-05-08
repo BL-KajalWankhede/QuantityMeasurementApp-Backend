@@ -1,9 +1,3 @@
-databases:
-  - name: qma-db
-    databaseName: quantity_measurement
-    user: postgres
-    plan: free
-
 services:
   # 1. Service Registry (Eureka)
   - type: web
@@ -23,13 +17,27 @@ services:
     plan: free
     envVars:
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-        value: https://qma-registry.onrender.com/eureka/
+        value: https://qma-eureka-kuee.onrender.com/eureka/
       - key: SPRING_DATASOURCE_URL
-        fromDatabase:
-          name: qma-db
-          property: connectionString
+        value: jdbc:postgresql://qma-3c9ee81a-qma-06052026.i.aivencloud.com:22985/defaultdb?sslmode=require
+      - key: SPRING_DATASOURCE_USERNAME
+        value: avnadmin
+      - key: SPRING_DATASOURCE_PASSWORD
+        value: AVNS_wnVjkTVNyu3Igttd7RT
       - key: QMA_JWT_SECRET
-        generateValue: true
+        value: b1f5e6d7c8a9b0c1d2e3f405162738495a6b7c8d9e0f1a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b
+      - key: QMA_OAUTH2_REDIRECT_URI
+        value: https://quantitymeasurementapp-p0gz.onrender.com/oauth/callback
+      - key: QMA_FRONTEND_ORIGIN
+        value: https://quantitymeasurementapp-p0gz.onrender.com
+      - key: QMA_CORS_ALLOWED_ORIGINS
+        value: https://quantitymeasurementapp-p0gz.onrender.com
+      - key: QMA_GOOGLE_AUTH_REDIRECT_URI
+        value: https://quantitymeasurementapp-auth-9cyo.onrender.com/login/oauth2/code/google
+      - key: GOOGLE_CLIENT_ID
+        value: 332652104232-bjke91gs5g6tj9357gibsu95hpa6h5rn.apps.googleusercontent.com
+      - key: GOOGLE_CLIENT_SECRET
+        value: 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
 
   # 3. Quantity Service
   - type: web
@@ -40,11 +48,13 @@ services:
     plan: free
     envVars:
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-        value: https://qma-registry.onrender.com/eureka/
+        value: https://qma-eureka-kuee.onrender.com/eureka/
       - key: SPRING_DATASOURCE_URL
-        fromDatabase:
-          name: qma-db
-          property: connectionString
+        value: jdbc:postgresql://qma-3c9ee81a-qma-06052026.i.aivencloud.com:22985/defaultdb?sslmode=require
+      - key: SPRING_DATASOURCE_USERNAME
+        value: avnadmin
+      - key: SPRING_DATASOURCE_PASSWORD
+        value: AVNS_wnVjkTVNyu3Igttd7RT
 
   # 4. API Gateway
   - type: web
@@ -55,7 +65,7 @@ services:
     plan: free
     envVars:
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-        value: https://qma-registry.onrender.com/eureka/
+        value: https://qma-eureka-kuee.onrender.com/eureka/
 
   # 5. Frontend (React)
   - type: web
