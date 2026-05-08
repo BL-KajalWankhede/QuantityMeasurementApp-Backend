@@ -11,6 +11,12 @@ export function OAuthCallbackPage() {
     let mounted = true
 
     const verifySession = async () => {
+      const params = new URLSearchParams(window.location.search)
+      const urlToken = params.get('token')
+      if (urlToken) {
+        localStorage.setItem('qma_token', urlToken)
+      }
+
       const oauthInProgress = sessionStorage.getItem('qma_oauth_in_progress') === '1'
 
       if (isAuthenticated && !oauthInProgress) {

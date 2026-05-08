@@ -59,8 +59,12 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         System.out.println("DEBUG: OAuth2 Success for email: " + email);
         authCookieUtil.addAuthCookie(response, tokenPayload.token(), jwtService.getJwtExpirationMs(),
                 request.isSecure());
-        System.out.println("DEBUG: Redirecting to: " + redirectUri);
-        response.sendRedirect(redirectUri);
+        
+        // Append token to redirect URI for cross-domain support
+        String finalRedirectUri = redirectUri + (redirectUri.contains("?") ? "&" : "?") + "token=" + tokenPayload.token();
+        
+        System.out.println("DEBUG: Redirecting to: " + finalRedirectUri);
+        response.sendRedirect(finalRedirectUri);
     }
 
     private String safeString(String value, String fallback) {
