@@ -1,5 +1,5 @@
-// Hardcoded for local testing to ensure the Gateway (4000) is always used
-const baseUrl = 'http://localhost:4000'
+import { API_BASE_URL as baseUrl } from '../env'
+
 
 type RequestOptions = RequestInit & {
   auth?: boolean
@@ -26,12 +26,12 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     const raw = await response.text().catch(() => '')
     const maybeJson = raw
       ? (() => {
-          try {
-            return JSON.parse(raw)
-          } catch {
-            return { message: raw }
-          }
-        })()
+        try {
+          return JSON.parse(raw)
+        } catch {
+          return { message: raw }
+        }
+      })()
       : { message: response.statusText }
     const message = maybeJson?.message ?? 'Request failed'
     throw new Error(message)
@@ -63,4 +63,5 @@ export const apiClient = {
     request<T>(path, { ...options, method: 'PATCH', body: JSON.stringify(body) }),
 }
 
-export { baseUrl as API_BASE_URL }
+// No need to export baseUrl as it's already in env.ts
+
