@@ -13,6 +13,6 @@ RUN addgroup --system spring && adduser --system spring --ingroup spring
 COPY --from=build /workspace/target/*-SNAPSHOT.jar /app/app.jar
 
 USER spring:spring
-EXPOSE 8000
+EXPOSE 6000
 
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]

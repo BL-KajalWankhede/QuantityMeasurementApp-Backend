@@ -12,8 +12,8 @@ services:
   - type: web
     name: QuantityMeasurementApp-Auth
     env: docker
-    dockerContext: .
-    dockerfilePath: QMA-Auth/Dockerfile
+    dockerContext: QMA-Auth
+    dockerfilePath: Dockerfile
     plan: free
     envVars:
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
@@ -43,8 +43,8 @@ services:
   - type: web
     name: qma-service
     env: docker
-    dockerContext: .
-    dockerfilePath: QMA-Service/Dockerfile
+    dockerContext: QMA-Service
+    dockerfilePath: Dockerfile
     plan: free
     envVars:
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
@@ -60,8 +60,8 @@ services:
   - type: web
     name: qma-api
     env: docker
-    dockerContext: .
-    dockerfilePath: QMA-API/Dockerfile
+    dockerContext: QMA-API
+    dockerfilePath: Dockerfile
     plan: free
     envVars:
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
