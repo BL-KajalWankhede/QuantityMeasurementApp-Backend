@@ -14,15 +14,19 @@ export function OAuthCallbackPage() {
       const params = new URLSearchParams(window.location.search)
       const urlToken = params.get('token')
       if (urlToken) {
-        localStorage.setItem('qma_token', urlToken)
+        console.log("DEBUG: Token found in URL, saving to localStorage...");
+        localStorage.setItem('qma_token', urlToken);
+        // Small delay to ensure browser persistence
+        await new Promise(r => setTimeout(r, 100));
       }
 
       const oauthInProgress = sessionStorage.getItem('qma_oauth_in_progress') === '1'
 
-      if (isAuthenticated && !oauthInProgress) {
+      if (isAuthenticated && !oauthInProgress && !urlToken) {
         navigate('/dashboard', { replace: true })
         return
       }
+
 
       const isExpectedCallback = oauthInProgress
       if (!isExpectedCallback) {

@@ -15,8 +15,9 @@ import java.util.Optional;
 @Service
 public class GatewayJwtService {
 
-    @Value("${app.jwt.secret:${QMA_JWT_SECRET:change-me-to-a-long-random-secret-key-at-least-32-bytes}}")
+    @Value("${app.jwt.secret}")
     private String jwtSecret;
+
 
     private SecretKey secretKey;
 
