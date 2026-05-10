@@ -33,7 +33,7 @@ services:
       - key: QMA_CORS_ALLOWED_ORIGINS
         value: https://quantitymeasurementapp-p0gz.onrender.com
       - key: QMA_GOOGLE_AUTH_REDIRECT_URI
-        value: https://quantitymeasurementapp-auth-9cyo.onrender.com/login/oauth2/code/google
+        value: https://quantitymeasurementapp-api-5be3.onrender.com/login/oauth2/code/google
       - key: GOOGLE_CLIENT_ID
         value: 332652104232-bjke91gs5g6tj9357gibsu95hpa6h5rn.apps.googleusercontent.com
       - key: GOOGLE_CLIENT_SECRET
