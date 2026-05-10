@@ -13,20 +13,24 @@ public class AuthCookieUtil {
     @Value("${app.auth.cookie.secure:false}")
     private boolean forceSecureCookie;
 
+    @Value("${app.auth.cookie.domain:localhost}")
+    private String cookieDomain;
+
     public void addAuthCookie(HttpServletResponse response, String token, long maxAgeMs, boolean secure) {
         boolean resolvedSecure = resolveSecure(secure);
         ResponseCookie authCookie = ResponseCookie.from(AUTH_COOKIE_NAME, token)
                 .httpOnly(true)
                 .secure(resolvedSecure)
-                .sameSite("Lax")
-                .domain("localhost")
+                .sameSite("None")
+                .domain(cookieDomain)
                 .path("/")
                 .maxAge(Math.max(0, maxAgeMs / 1000))
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, authCookie.toString());
         // Log for debugging
-        System.out.println("DEBUG: Cookie set - " + AUTH_COOKIE_NAME + " (Domain: localhost, Secure: " + resolvedSecure + ")");
+        System.out.println("DEBUG: Cookie set - " + AUTH_COOKIE_NAME + " (Domain: " + cookieDomain + ", Secure: " + resolvedSecure + ")");
     }
+
 
     public void clearAuthCookie(HttpServletResponse response, boolean secure) {
         boolean resolvedSecure = resolveSecure(secure);
