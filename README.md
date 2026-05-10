@@ -43,6 +43,38 @@ The system is architected as a distributed ecosystem to ensure high availability
 
 ---
 
+## 🔐 Security & Authentication Handshake
+
+The application implements a multi-layered security protocol to ensure stateless, secure user sessions:
+
+1.  **Identity Handshake:** When using Google Login, the `QMA-Auth` service generates a signed JWT.
+2.  **Cross-Origin Persistence:** Tokens are persisted to `localStorage` with a safety delay to ensure availability across cross-domain redirects.
+3.  **Gateway Validation:** The `QMA-API` Gateway intercepts every request, validates the JWT signature using a shared secret, and injects the user's identity into the internal request headers.
+4.  **CORS Policy:** Strict CORS rules are enforced, explicitly allowing only authorized origins and secure headers (`Authorization`, `X-User-Email`).
+
+---
+
+## ☁️ Production Architecture (Render & Aiven)
+
+The application is fully optimized for cloud deployment using **Render** (for compute) and **Aiven** (for PostgreSQL). 
+
+### **1. Core Configuration**
+*   **API Gateway:** Routes all traffic and validates JWT tokens.
+*   **Service Discovery:** Eureka Registry handles internal service lookup.
+*   **Database:** Aiven PostgreSQL with strict Hikari connection pooling (`max-pool-size: 2`) to ensure stability on free-tier infrastructure.
+
+### **2. Required Environment Variables**
+To run this in production, ensure the following variables are set on Render:
+*   `SPRING_DATASOURCE_URL`: Aiven JDBC URL (`jdbc:postgresql://...`)
+*   `QMA_JWT_SECRET`: Shared secret key for token validation.
+*   `GOOGLE_CLIENT_ID`: OAuth2 credentials.
+*   `QMA_OAUTH2_REDIRECT_URI`: `https://.../oauth/callback`
+
+### **3. Internal Networking**
+Services are configured to use Render's private network (`http://qma-eureka:8761/eureka/`) for high-speed inter-service communication.
+
+---
+
 ## 🛠️ Technology Stack
 
 ### **Backend (The Core)**
@@ -99,4 +131,5 @@ spring.datasource.password=your_password
 *   **GitHub:** [@BL-KajalWankhede](https://github.com/BL-KajalWankhede)
 *   **Portfolio:** [Project Link](https://quantitymeasurementapp-p0gz.onrender.com)
 
-
+---
+*Precision in every unit, excellence in every calculation.*
