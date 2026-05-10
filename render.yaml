@@ -66,6 +66,8 @@ services:
     envVars:
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
         value: https://qma-eureka-kuee.onrender.com/eureka/
+      - key: QMA_JWT_SECRET
+        value: b1f5e6d7c8a9b0c1d2e3f405162738495a6b7c8d9e0f1a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b
 
   # 5. Frontend (React)
   - type: web
