@@ -1,8 +1,11 @@
 package com.qmaserver.quantitymeasurement.auth;
 
 import com.qmaserver.quantitymeasurement.model.AuthProvider;
+import com.qmaserver.quantitymeasurement.model.RefreshTokenEntity;
 import com.qmaserver.quantitymeasurement.model.UserEntity;
 import com.qmaserver.quantitymeasurement.repository.UserRepository;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -16,16 +19,20 @@ import java.io.IOException;
 
 @Component
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
+    private static final Logger log = LogManager.getLogger(OAuth2SuccessHandler.class);
+
     private final UserRepository userRepository;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
     private final AuthCookieUtil authCookieUtil;
 
     @Value("${app.oauth2.redirect-uri}")
     private String redirectUri;
 
-    public OAuth2SuccessHandler(UserRepository userRepository, JwtService jwtService, AuthCookieUtil authCookieUtil) {
+    public OAuth2SuccessHandler(UserRepository userRepository, JwtService jwtService, RefreshTokenService refreshTokenService, AuthCookieUtil authCookieUtil) {
         this.userRepository = userRepository;
         this.jwtService = jwtService;
+        this.refreshTokenService = refreshTokenService;
         this.authCookieUtil = authCookieUtil;
     }
 
@@ -55,15 +62,17 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         }
         UserEntity savedUser = userRepository.save(user);
         JwtService.TokenPayload tokenPayload = jwtService.generateToken(savedUser);
+        RefreshTokenEntity refreshToken = refreshTokenService.createRefreshToken(savedUser.getId());
 
-        System.out.println("DEBUG: OAuth2 Success for email: " + email);
+        log.trace("Starting OAuth success redirect");
+        log.info("Google login successful");
         authCookieUtil.addAuthCookie(response, tokenPayload.token(), jwtService.getJwtExpirationMs(),
                 request.isSecure());
-        
-        // Append token to redirect URI for cross-domain support
+
+        // Append token to redirect URI
         String finalRedirectUri = redirectUri + (redirectUri.contains("?") ? "&" : "?") + "token=" + tokenPayload.token();
-        
-        System.out.println("DEBUG: Redirecting to: " + finalRedirectUri);
+
+        log.debug("Redirecting to client");
         response.sendRedirect(finalRedirectUri);
     }
 

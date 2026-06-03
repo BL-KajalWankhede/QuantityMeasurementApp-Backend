@@ -9,12 +9,7 @@ import java.util.UUID;
 
 
 @Entity
-@Table(name = "quantity_measurements",
-        indexes = {
-                @Index(name = "idx_quantity_measurements_operation", columnList = "operation_type"),
-                @Index(name = "idx_quantity_measurements_measurement", columnList = "left_measurement_type"),
-                @Index(name = "idx_quantity_measurements_created_at", columnList = "created_at")
-        })
+@Table(name = "quantity_measurements")
 public class QuantityMeasurementEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

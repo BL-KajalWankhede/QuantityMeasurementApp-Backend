@@ -1,4 +1,4 @@
-package com.quantitymeasurement.config;
+package com.qmaserver.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -21,16 +21,18 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
                         throws ServletException, IOException {
 
                 long startTime = System.currentTimeMillis();
-                String userEmail = request.getHeader("X-User-Email");
 
-                log.info(">>> REQUEST  [{} {}] | User: {}",
-                                request.getMethod(), request.getRequestURI(),
-                                userEmail != null ? userEmail : "anonymous");
+                log.info(">>> REQUEST  [{} {}]",
+                                request.getMethod(),
+                                request.getRequestURI());
 
                 filterChain.doFilter(request, response);
 
                 long duration = System.currentTimeMillis() - startTime;
                 log.info("<<< RESPONSE [{} {}] | Status: {} | Time: {}ms",
-                                request.getMethod(), request.getRequestURI(), response.getStatus(), duration);
+                                request.getMethod(),
+                                request.getRequestURI(),
+                                response.getStatus(),
+                                duration);
         }
 }

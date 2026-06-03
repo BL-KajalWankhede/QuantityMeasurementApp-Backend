@@ -13,9 +13,12 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Service
 public class JwtService {
+    private static final Logger log = LogManager.getLogger(JwtService.class);
     @Value("${app.jwt.secret}")
     private String jwtSecret;
 
@@ -30,6 +33,7 @@ public class JwtService {
     }
 
     public TokenPayload generateToken(UserEntity userEntity) {
+        log.trace("Starting token generation");
         Instant issuedAt = Instant.now();
         Instant expiresAt = issuedAt.plusMillis(jwtExpirationMs);
         String token = Jwts.builder()
@@ -58,11 +62,17 @@ public class JwtService {
     }
 
     private Claims extractClaims(String token) {
-        return Jwts.parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+        log.trace("Starting claims extraction");
+        try {
+            return Jwts.parser()
+                    .verifyWith(secretKey)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+        } catch (Exception e) {
+            log.fatal("Extraction failed: Token signature invalid");
+            throw e;
+        }
     }
 
     public record TokenPayload(String token, Instant issuedAt, Instant expiresAt) {

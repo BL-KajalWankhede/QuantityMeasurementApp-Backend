@@ -17,9 +17,6 @@ public interface QuantityMeasurementRepository extends JpaRepository<QuantityMea
 
     List<QuantityMeasurementEntity> findByCreatedAtAfter(LocalDateTime createdAt);
 
-    @Query("select q from QuantityMeasurementEntity q where q.operationType = :operationType and q.error = false order by q.createdAt asc")
-    List<QuantityMeasurementEntity> findSuccessfulByOperationType(OperationType operationType);
-
     long countByOperationTypeAndErrorFalse(OperationType operationType);
 
     List<QuantityMeasurementEntity> findByErrorTrueOrderByCreatedAtAsc();

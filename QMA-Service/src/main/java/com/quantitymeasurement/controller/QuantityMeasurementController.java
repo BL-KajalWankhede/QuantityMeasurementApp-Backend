@@ -1,16 +1,15 @@
 package com.quantitymeasurement.controller;
 
-
 import com.quantitymeasurement.model.*;
 import com.quantitymeasurement.service.IQuantityMeasurementService;
 
 import java.util.List;
-import java.util.Objects;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,100 +18,112 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
 @RestController
-@RequestMapping(value = "/api/v1/quantities", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping("/api/v1/quantities")
 @Tag(name = "Quantity Measurements", description = "REST API for quantity measurement operations")
 public class QuantityMeasurementController {
+
     private final IQuantityMeasurementService quantityMeasurementService;
 
     public QuantityMeasurementController(IQuantityMeasurementService quantityMeasurementService) {
         this.quantityMeasurementService = quantityMeasurementService;
     }
 
-    @PostMapping(value = "/compare", consumes = MediaType.APPLICATION_JSON_VALUE)
+    private String getUserId(String email) {
+        return (email != null && !email.isBlank()) ? email : "anonymous";
+    }
+
+    @PostMapping("/compare")
     @Operation(summary = "Compare two quantities")
-    public QuantityMeasurementDTO compareQuantities(
+    public ResponseEntity<QuantityMeasurementDTO> compareQuantities(
             @RequestHeader(value = "X-User-Email", required = false) String userEmail,
             @Valid @RequestBody QuantityInputDTO input) {
-        return quantityMeasurementService.compare(input.getThisQuantityDTO(), input.getThatQuantityDTO(), userEmail);
+
+        QuantityMeasurementDTO result = quantityMeasurementService.compare(
+                input.getThisQuantityDTO(), input.getThatQuantityDTO(), userEmail);
+
+        return ResponseEntity.ok(result);
     }
 
-    @PostMapping(value = "/convert", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/convert")
     @Operation(summary = "Convert a quantity to another unit")
-    public QuantityMeasurementDTO convertQuantity(
+    public ResponseEntity<QuantityMeasurementDTO> convertQuantity(
             @RequestHeader(value = "X-User-Email", required = false) String userEmail,
             @Valid @RequestBody QuantityInputDTO input) {
-        return quantityMeasurementService.convert(
-                input.getThisQuantityDTO(),
-                input.getThatQuantityDTO().getUnitName(),
-                userEmail);
+
+        QuantityMeasurementDTO result = quantityMeasurementService.convert(
+                input.getThisQuantityDTO(), input.getThatQuantityDTO().getUnitName(), userEmail);
+
+        return ResponseEntity.ok(result);
     }
 
-    @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/add")
     @Operation(summary = "Add two quantities")
-    public QuantityMeasurementDTO addQuantities(
+    public ResponseEntity<QuantityMeasurementDTO> addQuantities(
             @RequestHeader(value = "X-User-Email", required = false) String userEmail,
             @Valid @RequestBody QuantityInputDTO input) {
-        return quantityMeasurementService.add(
-                input.getThisQuantityDTO(),
-                input.getThatQuantityDTO(),
-                input.getThatQuantityDTO().getUnitName(),
-                userEmail);
+
+        QuantityMeasurementDTO result = quantityMeasurementService.add(input.getThisQuantityDTO(), input.getThatQuantityDTO(), input.getThatQuantityDTO().getUnitName(), userEmail);
+
+        return ResponseEntity.ok(result);
     }
 
-    @PostMapping(value = "/subtract", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/subtract")
     @Operation(summary = "Subtract two quantities")
-    public QuantityMeasurementDTO subtractQuantities(
+    public ResponseEntity<QuantityMeasurementDTO> subtractQuantities(
             @RequestHeader(value = "X-User-Email", required = false) String userEmail,
             @Valid @RequestBody QuantityInputDTO input) {
-        return quantityMeasurementService.subtract(
-                input.getThisQuantityDTO(),
-                input.getThatQuantityDTO(),
-                input.getThatQuantityDTO().getUnitName(),
-                userEmail);
+
+        QuantityMeasurementDTO result = quantityMeasurementService.subtract(input.getThisQuantityDTO(), input.getThatQuantityDTO(), input.getThatQuantityDTO().getUnitName(), userEmail);
+
+        return ResponseEntity.ok(result);
     }
 
-
-    @PostMapping(value = "/divide", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/divide")
     @Operation(summary = "Divide two quantities")
-    public QuantityMeasurementDTO divideQuantities(
+    public ResponseEntity<QuantityMeasurementDTO> divideQuantities(
             @RequestHeader(value = "X-User-Email", required = false) String userEmail,
             @Valid @RequestBody QuantityInputDTO input) {
-        return quantityMeasurementService.divide(input.getThisQuantityDTO(), input.getThatQuantityDTO(), userEmail);
+
+        QuantityMeasurementDTO result = quantityMeasurementService.divide(
+                input.getThisQuantityDTO(), input.getThatQuantityDTO(), userEmail);
+
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/me/history")
     @Operation(summary = "Get current user's measurement history")
-    public List<QuantityMeasurementDTO> getMyHistory(
+    public ResponseEntity<List<QuantityMeasurementDTO>> getMyHistory(
             @RequestHeader(value = "X-User-Email", required = false) String userEmail) {
+
         if (userEmail == null || userEmail.isBlank()) {
-            return List.of();
+            return ResponseEntity.ok(List.of());
         }
-        return quantityMeasurementService.getUserHistory(userEmail);
+
+        return ResponseEntity.ok(quantityMeasurementService.getUserHistory(userEmail));
     }
 
     @GetMapping("/history/operation/{operation}")
     @Operation(summary = "Get quantity measurement history by operation")
-    public List<QuantityMeasurementDTO> getOperationHistory(@PathVariable String operation) {
-        return quantityMeasurementService.getOperationHistory(OperationType.from(operation));
+    public ResponseEntity<List<QuantityMeasurementDTO>> getOperationHistory(@PathVariable String operation) {
+        return ResponseEntity.ok(quantityMeasurementService.getOperationHistory(OperationType.from(operation)));
     }
 
     @GetMapping("/history/type/{measurementType}")
     @Operation(summary = "Get quantity measurement history by measurement type")
-    public List<QuantityMeasurementDTO> getMeasurementHistory(@PathVariable String measurementType) {
-        return quantityMeasurementService.getMeasurementHistory(measurementType);
+    public ResponseEntity<List<QuantityMeasurementDTO>> getMeasurementHistory(@PathVariable String measurementType) {
+        return ResponseEntity.ok(quantityMeasurementService.getMeasurementHistory(measurementType));
     }
 
     @GetMapping("/history/errored")
     @Operation(summary = "Get errored quantity measurement history")
-    public List<QuantityMeasurementDTO> getErroredHistory() {
-        return quantityMeasurementService.getErroredHistory();
+    public ResponseEntity<List<QuantityMeasurementDTO>> getErroredHistory() {
+        return ResponseEntity.ok(quantityMeasurementService.getErroredHistory());
     }
 
     @GetMapping("/count/{operation}")
     @Operation(summary = "Get successful operation count")
-    public long getOperationCount(@PathVariable String operation) {
-        return quantityMeasurementService.getOperationCount(OperationType.from(operation));
+    public ResponseEntity<Long> getOperationCount(@PathVariable String operation) {
+        return ResponseEntity.ok(quantityMeasurementService.getOperationCount(OperationType.from(operation)));
     }
 }

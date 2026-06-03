@@ -5,6 +5,7 @@ import com.quantitymeasurement.auth.dto.LoginRequest;
 import com.quantitymeasurement.auth.dto.SignupRequest;
 import com.quantitymeasurement.auth.dto.UserProfileResponse;
 import com.quantitymeasurement.model.AuthProvider;
+import com.quantitymeasurement.model.RefreshTokenEntity;
 import com.quantitymeasurement.model.UserEntity;
 import com.quantitymeasurement.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,11 +17,13 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, RefreshTokenService refreshTokenService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Transactional
@@ -38,11 +41,12 @@ public class AuthService {
         user.setProvider(AuthProvider.LOCAL);
         UserEntity savedUser = userRepository.save(user);
         JwtService.TokenPayload tokenPayload = jwtService.generateToken(savedUser);
-        return new AuthResponse(tokenPayload.token(), tokenPayload.issuedAt(), tokenPayload.expiresAt(),
+        RefreshTokenEntity refreshToken = refreshTokenService.createRefreshToken(savedUser.getId());
+        return new AuthResponse(tokenPayload.token(), refreshToken.getToken(), tokenPayload.issuedAt(), tokenPayload.expiresAt(), refreshToken.getExpiryDate(),
                 UserProfileResponse.fromUser(savedUser));
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public AuthResponse login(LoginRequest request) {
         String email = request.getEmail().trim().toLowerCase();
         UserEntity user = userRepository.findByEmailIgnoreCase(email)
@@ -56,7 +60,8 @@ public class AuthService {
         }
 
         JwtService.TokenPayload tokenPayload = jwtService.generateToken(user);
-        return new AuthResponse(tokenPayload.token(), tokenPayload.issuedAt(), tokenPayload.expiresAt(),
+        RefreshTokenEntity refreshToken = refreshTokenService.createRefreshToken(user.getId());
+        return new AuthResponse(tokenPayload.token(), refreshToken.getToken(), tokenPayload.issuedAt(), tokenPayload.expiresAt(), refreshToken.getExpiryDate(),
                 UserProfileResponse.fromUser(user));
     }
 
@@ -72,5 +77,16 @@ public class AuthService {
     public UserEntity getUserByEmail(String email) {
         return userRepository.findByEmailIgnoreCase(email)
                 .orElseThrow(() -> new AuthFlowException("User not found"));
+    }
+
+    @Transactional
+    public AuthResponse refreshToken(String refreshTokenStr) {
+        RefreshTokenEntity refreshTokenEntity = refreshTokenService.findByToken(refreshTokenStr);
+        refreshTokenEntity = refreshTokenService.verifyExpiration(refreshTokenEntity);
+        UserEntity user = refreshTokenEntity.getUser();
+        
+        JwtService.TokenPayload accessPayload = jwtService.generateToken(user);
+        
+        return new AuthResponse(accessPayload.token(), refreshTokenEntity.getToken(), accessPayload.issuedAt(), accessPayload.expiresAt(), refreshTokenEntity.getExpiryDate(), UserProfileResponse.fromUser(user));
     }
 }

@@ -2,6 +2,7 @@ package com.qmaserver.quantitymeasurement.auth;
 
 import com.qmaserver.quantitymeasurement.auth.dto.AuthResponse;
 import com.qmaserver.quantitymeasurement.auth.dto.LoginRequest;
+import com.qmaserver.quantitymeasurement.auth.dto.RefreshTokenRequest;
 import com.qmaserver.quantitymeasurement.auth.dto.SignupRequest;
 import com.qmaserver.quantitymeasurement.auth.dto.UserProfileResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,31 +19,41 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.qmaserver.quantitymeasurement.util.SecurityUtils.resolveEmail;
+
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
+
     private final AuthService authService;
     private final AuthCookieUtil authCookieUtil;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
 
-    public AuthController(AuthService authService, AuthCookieUtil authCookieUtil, JwtService jwtService) {
+    public AuthController(AuthService authService, AuthCookieUtil authCookieUtil, JwtService jwtService, RefreshTokenService refreshTokenService) {
         this.authService = authService;
         this.authCookieUtil = authCookieUtil;
         this.jwtService = jwtService;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @PostMapping("/signup")
-    public AuthResponse signup(@Valid @RequestBody SignupRequest request) {
-        return authService.signup(request);
+    public ResponseEntity<AuthResponse> signup(@Valid @RequestBody SignupRequest request) {
+        return ResponseEntity.ok(authService.signup(request));
     }
 
     @PostMapping("/login")
-    public AuthResponse login(@Valid @RequestBody LoginRequest request, HttpServletRequest httpServletRequest,
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request, HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse) {
         AuthResponse authResponse = authService.login(request);
         authCookieUtil.addAuthCookie(httpServletResponse, authResponse.getAccessToken(),
                 jwtService.getJwtExpirationMs(), httpServletRequest.isSecure());
-        return authResponse;
+        return ResponseEntity.ok(authResponse);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> refresh(@Valid @RequestBody RefreshTokenRequest request) {
+        return ResponseEntity.ok(authService.refreshToken(request.getRefreshToken()));
     }
 
     @GetMapping("/session")
@@ -52,7 +63,7 @@ public class AuthController {
             return ResponseEntity.noContent().build();
         }
 
-        String email = extractEmail(authentication);
+        String email = resolveEmail(authentication);
         if (email == null || email.isBlank()) {
             return ResponseEntity.noContent().build();
         }
@@ -71,27 +82,5 @@ public class AuthController {
         authCookieUtil.clearAuthCookie(httpServletResponse, httpServletRequest.isSecure());
         httpServletResponse.setHeader("Clear-Site-Data", "\"cache\", \"cookies\", \"storage\"");
         return ResponseEntity.noContent().build();
-    }
-
-    private String extractEmail(Authentication authentication) {
-        Object principal = authentication.getPrincipal();
-
-        if (principal instanceof UserDetails userDetails) {
-            return userDetails.getUsername();
-        }
-
-        if (principal instanceof OAuth2User oauth2User) {
-            Object email = oauth2User.getAttribute("email");
-            if (email instanceof String emailString && !emailString.isBlank()) {
-                return emailString;
-            }
-        }
-
-        String authName = authentication.getName();
-        if (authName != null && authName.contains("@")) {
-            return authName;
-        }
-
-        return null;
     }
 }
