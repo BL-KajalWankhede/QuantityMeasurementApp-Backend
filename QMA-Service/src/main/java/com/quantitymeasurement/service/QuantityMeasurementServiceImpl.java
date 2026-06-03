@@ -7,13 +7,14 @@ import com.quantitymeasurement.repository.QuantityMeasurementRepository;
 import com.quantitymeasurement.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
 @Service
 public class QuantityMeasurementServiceImpl implements IQuantityMeasurementService {
+    private static final Logger log = LogManager.getLogger(QuantityMeasurementServiceImpl.class);
     private final QuantityMeasurementRepository repository;
     private final UserRepository userRepository;
 
@@ -24,85 +25,106 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
 
     @Override
     public QuantityMeasurementDTO compare(QuantityDTO leftQuantity, QuantityDTO rightQuantity, String userEmail) {
-        return execute(OperationType.COMPARE, leftQuantity, rightQuantity, userEmail, () -> {
+        log.info("Comparing quantities");
+        QuantityMeasurementDTO result = execute(OperationType.COMPARE, leftQuantity, rightQuantity, userEmail, () -> {
             boolean isEqual = compareQuantities(toModel(leftQuantity), toModel(rightQuantity));
             return new QuantityMeasurementEntity(OperationType.COMPARE, leftQuantity, rightQuantity, isEqual, null);
         });
+        return result;
     }
 
     @Override
     public QuantityMeasurementDTO convert(QuantityDTO sourceQuantity, String targetUnitName, String userEmail) {
-        return execute(OperationType.CONVERT, sourceQuantity, null, userEmail, () -> {
+        log.info("Converting quantity");
+        QuantityMeasurementDTO result = execute(OperationType.CONVERT, sourceQuantity, null, userEmail, () -> {
             QuantityModel<?> sourceModel = toModel(sourceQuantity);
             IMeasurable targetUnit = resolveTargetUnit(sourceModel.getUnit().getMeasurementType(), targetUnitName);
-            Quantity<?> result = convertTo(sourceModel, targetUnit);
-            return new QuantityMeasurementEntity(OperationType.CONVERT, sourceQuantity, toDto(result));
+            Quantity<?> resultQuantity = convertTo(sourceModel, targetUnit);
+            return new QuantityMeasurementEntity(OperationType.CONVERT, sourceQuantity, toDto(resultQuantity));
         });
+        return result;
     }
 
     @Override
-    public QuantityMeasurementDTO add(QuantityDTO leftQuantity, QuantityDTO rightQuantity, String targetUnitName, String userEmail) {
-        return execute(OperationType.ADD, leftQuantity, rightQuantity, userEmail, () -> {
-            Quantity<?> result = addQuantities(toModel(leftQuantity), toModel(rightQuantity), targetUnitName);
-            return new QuantityMeasurementEntity(OperationType.ADD, leftQuantity, rightQuantity, toDto(result));
+    public QuantityMeasurementDTO add(QuantityDTO leftQuantity, QuantityDTO rightQuantity, String targetUnitName,
+            String userEmail) {
+        log.info("Adding quantities");
+        QuantityMeasurementDTO result = execute(OperationType.ADD, leftQuantity, rightQuantity, userEmail, () -> {
+            Quantity<?> resultQuantity = addQuantities(toModel(leftQuantity), toModel(rightQuantity), targetUnitName);
+            return new QuantityMeasurementEntity(OperationType.ADD, leftQuantity, rightQuantity, toDto(resultQuantity));
         });
+        return result;
     }
 
     @Override
-    public QuantityMeasurementDTO subtract(QuantityDTO leftQuantity, QuantityDTO rightQuantity, String targetUnitName, String userEmail) {
-        return execute(OperationType.SUBTRACT, leftQuantity, rightQuantity, userEmail, () -> {
-            Quantity<?> result = subtractQuantities(toModel(leftQuantity), toModel(rightQuantity), targetUnitName);
-            return new QuantityMeasurementEntity(OperationType.SUBTRACT, leftQuantity, rightQuantity, toDto(result));
+    public QuantityMeasurementDTO subtract(QuantityDTO leftQuantity, QuantityDTO rightQuantity, String targetUnitName,
+            String userEmail) {
+        log.info("Subtracting quantities");
+        QuantityMeasurementDTO result = execute(OperationType.SUBTRACT, leftQuantity, rightQuantity, userEmail, () -> {
+            Quantity<?> resultQuantity = subtractQuantities(toModel(leftQuantity), toModel(rightQuantity), targetUnitName);
+            return new QuantityMeasurementEntity(OperationType.SUBTRACT, leftQuantity, rightQuantity, toDto(resultQuantity));
         });
+        return result;
     }
 
     @Override
     public QuantityMeasurementDTO divide(QuantityDTO leftQuantity, QuantityDTO rightQuantity, String userEmail) {
-        return execute(OperationType.DIVIDE, leftQuantity, rightQuantity, userEmail, () -> {
-            double result = divideQuantities(toModel(leftQuantity), toModel(rightQuantity));
-            return new QuantityMeasurementEntity(OperationType.DIVIDE, leftQuantity, rightQuantity, null, result);
+        log.info("Dividing quantities");
+        QuantityMeasurementDTO result = execute(OperationType.DIVIDE, leftQuantity, rightQuantity, userEmail, () -> {
+            double resultValue = divideQuantities(toModel(leftQuantity), toModel(rightQuantity));
+            return new QuantityMeasurementEntity(OperationType.DIVIDE, leftQuantity, rightQuantity, null, resultValue);
         });
+        return result;
     }
 
     @Override
     public List<QuantityMeasurementDTO> getOperationHistory(OperationType operationType) {
+        log.info("Fetching operation history");
         return QuantityMeasurementDTO.fromEntityList(repository.findByOperationTypeOrderByCreatedAtAsc(operationType));
     }
 
     @Override
     public List<QuantityMeasurementDTO> getMeasurementHistory(String measurementType) {
+        log.info("Fetching measurement history");
         return QuantityMeasurementDTO.fromEntityList(
                 repository.findByLeftMeasurementTypeOrderByCreatedAtAsc(measurementType.trim().toUpperCase()));
     }
 
     @Override
     public long getOperationCount(OperationType operationType) {
+        log.info("Fetching operation count");
         return repository.countByOperationTypeAndErrorFalse(operationType);
     }
 
     @Override
     public List<QuantityMeasurementDTO> getErroredHistory() {
+        log.info("Fetching errored history");
         return QuantityMeasurementDTO.fromEntityList(repository.findByErrorTrueOrderByCreatedAtAsc());
     }
 
     @Override
     public List<QuantityMeasurementDTO> getUserHistory(String userEmail) {
+        log.trace("Starting user history fetch");
         if (userEmail == null || userEmail.isBlank()) {
+            log.fatal("Fetch failed: Missing user email");
             return List.of();
         }
+        log.info("Fetching user history");
         return QuantityMeasurementDTO.fromEntityList(repository.findByUserEmail(userEmail));
     }
 
     private QuantityMeasurementDTO execute(OperationType operationType, QuantityDTO leftQuantity,
-            QuantityDTO rightQuantity, String userEmail,
-            Operation operation) {
+            QuantityDTO rightQuantity, String userEmail, Operation operation) {
+        log.trace("Starting operation execution");
         validateDto(leftQuantity);
         if (operationType != OperationType.CONVERT) {
             validateDto(rightQuantity);
         }
         try {
-            return saveAndConvert(operation.perform(), userEmail);
+            QuantityMeasurementEntity resultEntity = operation.perform();
+            return saveAndConvert(resultEntity, userEmail);
         } catch (RuntimeException exception) {
+            log.warn("{} operation failed: {}", operationType, exception.getMessage());
             QuantityMeasurementEntity errorEntity = new QuantityMeasurementEntity(operationType, leftQuantity,
                     rightQuantity, mapException(operationType, exception).getMessage());
             saveAndConvert(errorEntity, userEmail);
@@ -112,23 +134,15 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
 
     private QuantityMeasurementDTO saveAndConvert(QuantityMeasurementEntity entity, String userEmail) {
         findUser(userEmail).ifPresent(entity::setUser);
+        log.debug("Saving {} measurement history to database", entity.getOperationType());
         return QuantityMeasurementDTO.fromEntity(repository.save(entity));
     }
 
     private java.util.Optional<UserEntity> findUser(String userEmail) {
-        if (userEmail != null && !userEmail.isBlank()) {
-            return userRepository.findByEmailIgnoreCase(userEmail);
-        }
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
+        if (userEmail == null || userEmail.isBlank() || "anonymous".equalsIgnoreCase(userEmail)) {
             return java.util.Optional.empty();
         }
-        String email = authentication.getName();
-        if (email == null || "anonymousUser".equalsIgnoreCase(email)) {
-            return java.util.Optional.empty();
-        }
-        return userRepository.findByEmailIgnoreCase(email);
+        return userRepository.findByEmailIgnoreCase(userEmail);
     }
 
     private void validateDto(QuantityDTO quantityDTO) {

@@ -1,6 +1,7 @@
 package com.quantitymeasurement.auth;
 import com.quantitymeasurement.auth.dto.AuthResponse;
 import com.quantitymeasurement.auth.dto.LoginRequest;
+import com.quantitymeasurement.auth.dto.RefreshTokenRequest;
 import com.quantitymeasurement.auth.dto.SignupRequest;
 import com.quantitymeasurement.auth.dto.UserProfileResponse;
 import jakarta.validation.Valid;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -21,17 +23,22 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public AuthResponse signup(@Valid @RequestBody SignupRequest request) {
-        return authService.signup(request);
+    public ResponseEntity<AuthResponse> signup(@Valid @RequestBody SignupRequest request) {
+        return ResponseEntity.ok(authService.signup(request));
     }
 
     @PostMapping("/login")
-    public AuthResponse login(@Valid @RequestBody LoginRequest request) {
-        return authService.login(request);
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
+        return ResponseEntity.ok(authService.login(request));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> refresh(@Valid @RequestBody RefreshTokenRequest request) {
+        return ResponseEntity.ok(authService.refreshToken(request.getRefreshToken()));
     }
 
     @GetMapping("/me")
-    public UserProfileResponse me(Authentication authentication) {
-        return authService.getProfileByEmail(authentication.getName());
+    public ResponseEntity<UserProfileResponse> me(Authentication authentication) {
+        return ResponseEntity.ok(authService.getProfileByEmail(authentication.getName()));
     }
 }

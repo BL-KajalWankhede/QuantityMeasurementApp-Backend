@@ -30,7 +30,7 @@ start "QMA-API" cmd /k "cd QMA-API && mvnw.cmd clean spring-boot:run"
 
 :: 5. START FRONTEND
 echo [5/5] Starting React Frontend (Port 5173)...
-start "QMA-Client" cmd /k "cd QMA-Client && npm run dev"
+start "QMA-Client" cmd /k "cd ..\QuantityMeasurementApp-Frontend\QMA-Client && npm run dev"
 
 echo.
 echo ==========================================

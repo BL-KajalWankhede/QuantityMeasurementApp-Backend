@@ -1,6 +1,5 @@
 package com.quantitymeasurement.model;
 
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -103,5 +102,41 @@ public class QuantityMeasurementDTO {
 
     public boolean isError() {
         return error;
+    }
+
+    @Override
+    public String toString() {
+        if (error) {
+            return "ERROR: " + errorMessage;
+        }
+
+        String finalResult = resultString;
+        if (finalResult == null) {
+            if (resultUnit != null) {
+                finalResult = resultValue + " " + resultUnit;
+            } else if (resultValue != null) {
+                finalResult = String.valueOf(resultValue);
+            } else {
+                finalResult = "UNKNOWN";
+            }
+        }
+
+        if (operation == null || operation.equals("CONVERT")) {
+            return thisValue + " " + thisUnit + " = " + finalResult;
+        }
+
+        String symbol = switch (operation) {
+            case "ADD" -> "+";
+            case "SUBTRACT" -> "-";
+            case "DIVIDE" -> "/";
+            case "COMPARE" -> "compared to";
+            default -> operation;
+        };
+
+        if (thatUnit == null || thatUnit.isBlank()) {
+            return thisValue + " " + thisUnit + " " + symbol + " " + thatValue + " = " + finalResult;
+        }
+
+        return thisValue + " " + thisUnit + " " + symbol + " " + thatValue + " " + thatUnit + " = " + finalResult;
     }
 }

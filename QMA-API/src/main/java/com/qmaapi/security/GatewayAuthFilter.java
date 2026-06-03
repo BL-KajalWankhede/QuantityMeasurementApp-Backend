@@ -16,12 +16,22 @@ import org.springframework.cloud.gateway.filter.GlobalFilter;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Optional;
+import java.util.List;
 
 @Component
 public class GatewayAuthFilter implements GlobalFilter, Ordered {
     private static final String AUTH_COOKIE_NAME = "QMA_AUTH_TOKEN";
     private static final String USER_EMAIL_HEADER = "X-User-Email";
+    
+    private static final List<String> PUBLIC_PATHS = List.of(
+            "/api/v1/auth",
+            "/api/v1/quantities",
+            "/login/oauth2",
+            "/oauth2",
+            "/swagger",
+            "/v3/api-docs",
+            "/api-docs"
+    );
 
     private final GatewayJwtService gatewayJwtService;
 
@@ -33,32 +43,29 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path = exchange.getRequest().getURI().getPath();
         String token = resolveToken(exchange.getRequest());
-        
-        Optional<String> email = Optional.empty();
+
+        String email = null;
         if (token != null && !token.isBlank()) {
             email = gatewayJwtService.extractEmailIfValid(token);
         }
 
-        // If authentication is strictly required but missing/invalid
+        // Block unauthenticated requests for secured paths
         if (requiresAuthentication(path, exchange.getRequest().getMethod())) {
             if (token == null || token.isBlank()) {
                 return unauthorized(exchange.getResponse(), "Missing authentication token");
             }
-            if (email.isEmpty()) {
+            if (email == null) {
                 return unauthorized(exchange.getResponse(), "Invalid or expired authentication token");
             }
         }
 
-        // If we found a valid user, always add the header (even for public endpoints)
-        if (email.isPresent()) {
-            String finalToken = token;
-            String finalEmail = email.get();
+        // Inject user identity for downstream services
+        if (email != null) {
             ServerHttpRequest request = exchange.getRequest().mutate()
-                    .headers(headers -> {
-                        headers.set(USER_EMAIL_HEADER, finalEmail);
-                        headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + finalToken);
-                    })
+                    .header(USER_EMAIL_HEADER, email)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                     .build();
+            
             return chain.filter(exchange.mutate().request(request).build());
         }
 
@@ -71,16 +78,15 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
     }
 
     private boolean requiresAuthentication(String path, HttpMethod method) {
-        if (HttpMethod.OPTIONS.equals(method) 
-                || path.startsWith("/api/v1/auth") 
-                || path.startsWith("/api/v1/quantities")
-                || path.startsWith("/login/oauth2")
-                || path.startsWith("/oauth2")
-                || path.startsWith("/swagger")
-                || path.startsWith("/v3/api-docs")
-                || path.startsWith("/api-docs")) {
+        if (HttpMethod.OPTIONS.equals(method)) {
             return false;
         }
+
+        boolean isPublicPath = PUBLIC_PATHS.stream().anyMatch(path::startsWith);
+        if (isPublicPath) {
+            return false;
+        }
+        
         return path.startsWith("/api/v1/users") || path.startsWith("/api/v1/history");
     }
 
@@ -99,9 +105,11 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
 
     private Mono<Void> unauthorized(ServerHttpResponse response, String message) {
         response.setStatusCode(HttpStatus.UNAUTHORIZED);
-        response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
-        byte[] body = ("{\"message\":\"" + message + "\"}").getBytes(StandardCharsets.UTF_8);
-        DataBuffer dataBuffer = response.bufferFactory().wrap(body);
-        return response.writeWith(Mono.just(dataBuffer));
+        response.getHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+        
+        String errorJson = "{\"message\":\"" + message + "\"}";
+        DataBuffer buffer = response.bufferFactory().wrap(errorJson.getBytes(StandardCharsets.UTF_8));
+        
+        return response.writeWith(Mono.just(buffer));
     }
 }

@@ -12,12 +12,15 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 @Service
 public class GatewayJwtService {
+    private static final Logger log = LogManager.getLogger(GatewayJwtService.class);
 
     @Value("${app.jwt.secret}")
     private String jwtSecret;
-
 
     private SecretKey secretKey;
 
@@ -26,17 +29,21 @@ public class GatewayJwtService {
         this.secretKey = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
 
-    public Optional<String> extractEmailIfValid(String token) {
+    public String extractEmailIfValid(String token) {
+        log.trace("Starting token validation");
         try {
             Jws<Claims> signedClaims = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token);
-            Claims claims = signedClaims.getPayload();
-            String subject = claims.getSubject();
-            if (subject == null || subject.isBlank()) {
-                return Optional.empty();
+            String email = signedClaims.getPayload().getSubject();
+            
+            if (email != null && !email.isBlank()) {
+                return email.trim().toLowerCase();
+            } else {
+                log.fatal("Validation failed: Token subject is missing");
             }
-            return Optional.of(subject.trim().toLowerCase());
-        } catch (Exception ignored) {
-            return Optional.empty();
+        } catch (Exception ex) {
+            log.debug("JWT validation failed: {}", ex.getMessage());
         }
+        
+        return null;
     }
 }

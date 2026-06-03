@@ -4,10 +4,7 @@ import com.qmaserver.quantitymeasurement.auth.OAuth2SuccessHandler;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.stereotype.Component;
 
-/**
- * This component provides optional Google OAuth2 configuration.
- * It is separated from the main SecurityConfig to keep the project modular.
- */
+//Google OAuth2 configuration
 @Component
 public class OptionalGoogleOAuth2Config {
 
@@ -17,9 +14,7 @@ public class OptionalGoogleOAuth2Config {
         this.oAuth2SuccessHandler = oAuth2SuccessHandler;
     }
 
-    /**
-     * Applies the Google OAuth2 login configuration to the HttpSecurity object.
-     */
+   // Google OAuth2 login configuration to HttpSecurity object.
     public void configure(HttpSecurity http) throws Exception {
         http.oauth2Login(oauth2 -> oauth2
                 .authorizationEndpoint(authorization -> authorization

@@ -29,7 +29,7 @@ public class SecurityConfig {
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final OptionalGoogleOAuth2Config optionalGoogleOAuth2Config;
 
-    @Value("${app.cors.allowed-origins:https://quantitymeasurementapp-p0gz.onrender.com,http://localhost:5173,http://localhost:3000,http://localhost:8000,http://127.0.0.1:8000,http://localhost:4000}")
+    @Value("${app.cors.allowed-origins}")
     private String corsAllowedOrigins;
 
     public SecurityConfig(
@@ -57,7 +57,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-        // Apply Google OAuth2 configuration from the modular config file
+        // Apply Google OAuth2 configuration from config file
         optionalGoogleOAuth2Config.configure(http);
 
         return http.build();

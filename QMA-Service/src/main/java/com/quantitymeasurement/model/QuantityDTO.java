@@ -2,7 +2,6 @@ package com.quantitymeasurement.model;
 
 import com.equality.IMeasurable;
 import com.fasterxml.jackson.annotation.JsonAlias;
-import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -55,19 +54,6 @@ public class QuantityDTO {
 
     public void setMeasurementType(String measurementType) {
         this.measurementType = measurementType;
-    }
-
-    @AssertTrue(message = "Unit must be valid for the specified measurement type")
-    public boolean isValidUnitForMeasurementType() {
-        if (measurementType == null || measurementType.isBlank() || unitName == null || unitName.isBlank()) {
-            return true;
-        }
-        try {
-            IMeasurable.resolveUnit(measurementType, unitName);
-            return true;
-        } catch (IllegalArgumentException exception) {
-            return false;
-        }
     }
 
     public static QuantityDTO from(double value, IMeasurable unit) {

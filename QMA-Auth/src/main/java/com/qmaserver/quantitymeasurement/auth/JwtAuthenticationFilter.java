@@ -5,6 +5,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,6 +18,8 @@ import java.io.IOException;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    private static final Logger log = LogManager.getLogger(JwtAuthenticationFilter.class);
+
     private final JwtService jwtService;
     private final UserDetailsServiceImpl userDetailsService;
 
@@ -27,6 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+        log.trace("Starting JWT filter");
         String token = resolveToken(request);
         if (token == null || token.isBlank()) {
             filterChain.doFilter(request, response);
@@ -54,7 +59,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         userDetails, null, userDetails.getAuthorities());
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                log.info("User authenticated via token");
             } catch (Exception ignored) {
+                log.warn("Token authentication failed: User not found");
                 SecurityContextHolder.clearContext();
             }
         }
@@ -66,9 +73,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = resolveFromHeader(request);
         if (token == null) {
             token = resolveFromCookie(request);
-            if (token != null) System.out.println("DEBUG: Authenticating via Cookie");
+            if (token != null) log.debug("Token resolved via Cookie");
         } else {
-            System.out.println("DEBUG: Authenticating via Header");
+            log.debug("Token resolved via Header");
         }
         return token;
     }
