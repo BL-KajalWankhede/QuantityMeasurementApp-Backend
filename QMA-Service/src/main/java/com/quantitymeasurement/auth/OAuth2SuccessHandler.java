@@ -9,6 +9,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
+import com.quantitymeasurement.model.RefreshTokenEntity;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,13 +20,15 @@ import java.io.IOException;
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final UserRepository userRepository;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
 
     @Value("${app.oauth2.redirect-uri}")
     private String redirectUri;
 
-    public OAuth2SuccessHandler(UserRepository userRepository, JwtService jwtService) {
+    public OAuth2SuccessHandler(UserRepository userRepository, JwtService jwtService, RefreshTokenService refreshTokenService) {
         this.userRepository = userRepository;
         this.jwtService = jwtService;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Override
@@ -53,9 +56,11 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         }
         UserEntity savedUser = userRepository.save(user);
         JwtService.TokenPayload tokenPayload = jwtService.generateToken(savedUser);
+        RefreshTokenEntity refreshToken = refreshTokenService.createRefreshToken(savedUser.getId());
 
         String targetUrl = UriComponentsBuilder.fromUriString(redirectUri)
                 .queryParam("token", tokenPayload.token())
+                .queryParam("refreshToken", refreshToken.getToken())
                 .build()
                 .toUriString();
         response.sendRedirect(targetUrl);

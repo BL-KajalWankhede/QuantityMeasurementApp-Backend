@@ -48,4 +48,8 @@ public class RefreshTokenService {
         return refreshTokenRepository.findByToken(token)
                 .orElseThrow(() -> new AuthFlowException("Refresh token is not in database!"));
     }
+
+    public void deleteTokensByUser(UserEntity user) {
+        refreshTokenRepository.deleteByUser(user);
+    }
 }

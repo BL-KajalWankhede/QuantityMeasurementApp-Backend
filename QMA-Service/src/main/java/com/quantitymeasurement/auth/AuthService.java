@@ -89,4 +89,11 @@ public class AuthService {
         
         return new AuthResponse(accessPayload.token(), refreshTokenEntity.getToken(), accessPayload.issuedAt(), accessPayload.expiresAt(), refreshTokenEntity.getExpiryDate(), UserProfileResponse.fromUser(user));
     }
+
+    @Transactional
+    public void logout(String email) {
+        UserEntity user = userRepository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new AuthFlowException("User not found"));
+        refreshTokenService.deleteTokensByUser(user);
+    }
 }
