@@ -25,6 +25,7 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   // If token is expired, try to refresh and retry request
   if (response.status === 401 && auth && !options._isRetry && !path.includes('/refresh')) {
     const refreshToken = localStorage.getItem('qma_refresh_token')
+    console.log("DEBUG: Refresh token in localStorage is:", refreshToken ? "PRESENT" : "MISSING (NULL)")
     if (refreshToken) {
       // get new access token
       const res = await fetch(`${baseUrl}/api/v1/auth/refresh`, {
