@@ -1,8 +1,8 @@
 import { API_BASE_URL as baseUrl } from '../env'
 
-
 type RequestOptions = RequestInit & {
   auth?: boolean
+  _isRetry?: boolean
 }
 
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
@@ -21,6 +21,35 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     credentials: auth ? 'include' : 'same-origin',
     headers: requestHeaders,
   })
+
+  // If token is expired, try to refresh and retry request
+  if (response.status === 401 && auth && !options._isRetry && !path.includes('/refresh')) {
+    const refreshToken = localStorage.getItem('qma_refresh_token')
+    if (refreshToken) {
+      // get new access token
+      const res = await fetch(`${baseUrl}/api/v1/auth/refresh`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken })
+      }).catch(() => null)
+
+      if (res?.ok) {
+        const data = await res.json()
+
+        // Save the new tokens
+        localStorage.setItem('qma_token', data.accessToken)
+        if (data.refreshToken) localStorage.setItem('qma_refresh_token', data.refreshToken)
+
+        // Retry the original request
+        return request<T>(path, { ...options, _isRetry: true })
+      }
+
+      // refresh fails, clear tokens and force login
+      localStorage.removeItem('qma_token')
+      localStorage.removeItem('qma_refresh_token')
+      window.location.href = '/login'
+    }
+  }
 
   if (!response.ok) {
     const raw = await response.text().catch(() => '')
@@ -62,6 +91,3 @@ export const apiClient = {
   patch: <T>(path: string, body: unknown, options?: RequestOptions) =>
     request<T>(path, { ...options, method: 'PATCH', body: JSON.stringify(body) }),
 }
-
-// No need to export baseUrl as it's already in env.ts
-
