@@ -1,3 +1,4 @@
+import { API_BASE_URL as baseUrl } from '../env'
 import { apiClient } from './apiClient'
 import type { AuthResponse, UserProfile } from '../types'
 
@@ -36,6 +37,6 @@ export const authService = {
     localStorage.removeItem('qma_refresh_token')
     sessionStorage.setItem('qma_oauth_in_progress', '1')
     // Go via API Gateway so the cookie is set for the gateway origin
-    window.location.assign('https://quantitymeasurementapp-api-5be3.onrender.com/oauth2/authorization/google')
+    window.location.assign(`${baseUrl}/oauth2/authorization/google`)
   },
 }
