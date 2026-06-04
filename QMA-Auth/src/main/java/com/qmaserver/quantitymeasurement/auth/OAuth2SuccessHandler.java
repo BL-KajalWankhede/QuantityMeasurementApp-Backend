@@ -70,7 +70,9 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                 request.isSecure());
 
         // Append token to redirect URI
-        String finalRedirectUri = redirectUri + (redirectUri.contains("?") ? "&" : "?") + "token=" + tokenPayload.token();
+        String finalRedirectUri = redirectUri + (redirectUri.contains("?") ? "&" : "?") 
+                + "token=" + tokenPayload.token()
+                + "&refreshToken=" + refreshToken.getToken();
 
         log.debug("Redirecting to client");
         response.sendRedirect(finalRedirectUri);

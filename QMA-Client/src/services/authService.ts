@@ -27,9 +27,9 @@ export const authService = {
   },
   getSession: () => apiClient.get<UserProfile | undefined>('/api/v1/users/me'),
   logout: async () => {
+    await apiClient.post<void>('/api/v1/auth/logout').catch(() => { })
     localStorage.removeItem('qma_token')
     localStorage.removeItem('qma_refresh_token')
-    await apiClient.post<void>('/api/v1/auth/logout').catch(() => { })
   },
   startGoogleLogin: () => {
     localStorage.removeItem('qma_token') // Clear stale tokens

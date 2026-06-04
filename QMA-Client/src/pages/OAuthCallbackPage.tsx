@@ -13,9 +13,13 @@ export function OAuthCallbackPage() {
     const verifySession = async () => {
       const params = new URLSearchParams(window.location.search)
       const urlToken = params.get('token')
+      const urlRefreshToken = params.get('refreshToken')
       if (urlToken) {
         console.log("DEBUG: Token found in URL, saving to localStorage...");
         localStorage.setItem('qma_token', urlToken);
+        if (urlRefreshToken) {
+          localStorage.setItem('qma_refresh_token', urlRefreshToken);
+        }
         // Small delay to ensure browser persistence
         await new Promise(r => setTimeout(r, 100));
       }

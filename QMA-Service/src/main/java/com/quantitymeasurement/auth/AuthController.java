@@ -41,4 +41,12 @@ public class AuthController {
     public ResponseEntity<UserProfileResponse> me(Authentication authentication) {
         return ResponseEntity.ok(authService.getProfileByEmail(authentication.getName()));
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(Authentication authentication) {
+        if (authentication != null && authentication.getName() != null) {
+            authService.logout(authentication.getName());
+        }
+        return ResponseEntity.ok().build();
+    }
 }
