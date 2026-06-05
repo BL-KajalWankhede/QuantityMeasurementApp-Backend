@@ -46,13 +46,14 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
       }
     }
     
-    // If no refresh token or refresh fails, clear tokens and force login
-    localStorage.removeItem('qma_token')
-    localStorage.removeItem('qma_refresh_token')
-    if (window.location.pathname !== '/login' && window.location.pathname !== '/signup') {
-      window.location.href = '/login'
-    } else {
-      throw new Error('Unauthorized')
+    // If we had tokens but they are invalid/expired, clear them and redirect
+    const hadTokens = localStorage.getItem('qma_token') || localStorage.getItem('qma_refresh_token')
+    if (hadTokens) {
+      localStorage.removeItem('qma_token')
+      localStorage.removeItem('qma_refresh_token')
+      if (window.location.pathname !== '/login' && window.location.pathname !== '/signup') {
+        window.location.href = '/login'
+      }
     }
   }
 
