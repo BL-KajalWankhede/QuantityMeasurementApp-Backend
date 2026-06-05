@@ -49,7 +49,11 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     // If no refresh token or refresh fails, clear tokens and force login
     localStorage.removeItem('qma_token')
     localStorage.removeItem('qma_refresh_token')
-    window.location.href = '/login'
+    if (window.location.pathname !== '/login' && window.location.pathname !== '/signup') {
+      window.location.href = '/login'
+    } else {
+      throw new Error('Unauthorized')
+    }
   }
 
   if (!response.ok) {
