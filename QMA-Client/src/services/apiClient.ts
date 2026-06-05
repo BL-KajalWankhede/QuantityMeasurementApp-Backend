@@ -44,12 +44,12 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
         // Retry the original request
         return request<T>(path, { ...options, _isRetry: true })
       }
-
-      // refresh fails, clear tokens and force login
-      localStorage.removeItem('qma_token')
-      localStorage.removeItem('qma_refresh_token')
-      window.location.href = '/login'
     }
+    
+    // If no refresh token or refresh fails, clear tokens and force login
+    localStorage.removeItem('qma_token')
+    localStorage.removeItem('qma_refresh_token')
+    window.location.href = '/login'
   }
 
   if (!response.ok) {
