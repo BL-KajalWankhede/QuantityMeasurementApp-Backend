@@ -41,13 +41,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             username = jwtService.extractUsername(token);
         } catch (Exception exception) {
+            log.info("Token validation failed: {}", exception.getMessage());
             // If header token is invalid, try resolving from cookie
             String cookieToken = resolveFromCookie(request);
             if (cookieToken != null && !cookieToken.equals(token)) {
                 try {
                     username = jwtService.extractUsername(cookieToken);
                     token = cookieToken;
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                    log.error("Cookie token validation also failed", ignored);
+                }
             }
         }
 
@@ -60,8 +63,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                 log.info("User authenticated via token");
-            } catch (Exception ignored) {
-                log.warn("Token authentication failed: User not found");
+            } catch (Exception exception) {
+                log.error("Token authentication failed: User not found or invalid", exception);
                 SecurityContextHolder.clearContext();
             }
         }
