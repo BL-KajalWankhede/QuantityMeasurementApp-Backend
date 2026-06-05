@@ -25,6 +25,7 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   // If token is expired, try to refresh and retry request
   if (response.status === 401 && auth && !options._isRetry && !path.includes('/refresh')) {
     const refreshToken = localStorage.getItem('qma_refresh_token')
+    console.log("DEBUG: Refresh token in localStorage is:", refreshToken ? "PRESENT" : "MISSING (NULL)")
     if (refreshToken) {
       // get new access token
       const res = await fetch(`${baseUrl}/api/v1/auth/refresh`, {
@@ -43,12 +44,12 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
         // Retry the original request
         return request<T>(path, { ...options, _isRetry: true })
       }
-
-      // refresh fails, clear tokens and force login
-      localStorage.removeItem('qma_token')
-      localStorage.removeItem('qma_refresh_token')
-      window.location.href = '/login'
     }
+    
+    // If no refresh token or refresh fails, clear tokens and force login
+    localStorage.removeItem('qma_token')
+    localStorage.removeItem('qma_refresh_token')
+    window.location.href = '/login'
   }
 
   if (!response.ok) {
